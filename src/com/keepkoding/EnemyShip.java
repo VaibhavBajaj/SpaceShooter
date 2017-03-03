@@ -14,7 +14,8 @@ class EnemyShip extends Ship {
     private List<int[]> enemyPositions = new ArrayList<>();
 
     EnemyShip() {
-        spawnEnemy(1);
+        spawnCount = 1;
+        spawnEnemy(spawnCount);
     }
 
     private int randCoord(int min, int max) {
@@ -29,7 +30,7 @@ class EnemyShip extends Ship {
         }
     }
 
-    void spawnEnemy(int count) {
+    private void spawnEnemy(int count) {
         this.spawnCount = count;
         while (enemyPositions.size() < spawnCount) {
             enemyPositions.add(new int[] {randCoord(0, SpaceShooter.screenWidth)

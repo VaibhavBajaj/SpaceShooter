@@ -9,14 +9,14 @@ class PlayerShip extends Ship{
     private static final int
             playerSpriteWidth = 64,
             playerSpriteHeight = 64;
-    private final double acc = 0.2;
+    private final double acc = 0.1;
     private double x, y, xVel, yVel;
 
     PlayerShip() {
         xVel = 0;
         yVel = 0;
-        x = 436;
-        y = 436;
+        x = (SpaceShooter.screenWidth * 0.5) - (playerSpriteWidth * 0.5);
+        y = SpaceShooter.screenHeight * 0.8;
     }
 
     void update(boolean incXVel, boolean decXVel, boolean incYVel, boolean decYVel) {

@@ -1,5 +1,6 @@
 package com.keepkoding;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -11,8 +12,8 @@ import javax.swing.WindowConstants;
 public class SpaceShooter extends JPanel{
 
     static final int
-            screenWidth = 500,
-            screenHeight = 500;
+            screenWidth = 1440,
+            screenHeight = 800;
     // ASCII values for left and right.
     private static final int
             LEFT = 37,
@@ -50,10 +51,11 @@ public class SpaceShooter extends JPanel{
         JFrame frame = new JFrame("Space Shooter");
 
         SpaceShooter game = new SpaceShooter();
+        game.setPreferredSize(new Dimension(screenWidth, screenHeight));
         frame.add(game);
+        frame.pack();
 
         frame.setVisible(true);
-        frame.setSize(screenWidth, screenHeight);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         while (!gameOver) {
