@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-
+// XXX temporary test.
 public class SpaceShooter extends JPanel{
 
     static final int
