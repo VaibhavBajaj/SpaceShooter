@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-// XXX temporary test.
+
 public class SpaceShooter extends JPanel{
 
     static final int
@@ -35,7 +35,8 @@ public class SpaceShooter extends JPanel{
     }
 
     private void update() {
-        //This function tells the snake to turn right or left depending on the values of the booleans
+        //This function tells the snake to turn right or left depending
+        // on the values of the booleans.
         playerShip.update(incXVel, decXVel, incYVel, decYVel);
     }
 
@@ -48,6 +49,10 @@ public class SpaceShooter extends JPanel{
     }
 
     public static void main(String[] args) {
+        // Some java implementations don't seem to use hardware acceleration
+        // by default. Force them to behave!
+        System.setProperty("sun.java2d.opengl", "True");
+        
         JFrame frame = new JFrame("Space Shooter");
 
         SpaceShooter game = new SpaceShooter();
@@ -68,7 +73,8 @@ public class SpaceShooter extends JPanel{
                 Thread.sleep(10);
             }
             catch (InterruptedException e) {
-                // If exception is caused, break out of the game Loop. Effectively hangs the game...
+                // If exception is caused, break out of the game Loop.
+                // Effectively hangs the game...
                 break;
             }
         }
