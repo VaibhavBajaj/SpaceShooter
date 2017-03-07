@@ -5,7 +5,7 @@ import java.net.URL;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class ImageLoader {
+class ImageLoader {
 
     public static BufferedImage load(String name) {
         URL url = ImageLoader.class.getResource("assets/" + name);

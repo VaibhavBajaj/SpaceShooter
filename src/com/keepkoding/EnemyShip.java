@@ -1,15 +1,19 @@
 package com.keepkoding;
 
+import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 class EnemyShip extends Ship {
-
+    private static final BufferedImage sprite =
+        ImageLoader.load("enemyShip.png");
+        
     private static final int
-            enemySpriteWidth = 32,
-            enemySpriteLength = 32;
+            enemySpriteWidth = sprite.getWidth(),
+            enemySpriteLength = sprite.getHeight();
+    
     private int spawnCount;
     private List<int[]> enemyPositions = new ArrayList<>();
 
