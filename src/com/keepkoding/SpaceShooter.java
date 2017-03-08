@@ -14,12 +14,7 @@ public class SpaceShooter extends JPanel{
     static final int
             screenWidth = 1440,
             screenHeight = 800;
-    // ASCII values for left and right.
-    private static final int
-            LEFT = 37,
-            UP = 38,
-            RIGHT = 39,
-            DOWN = 40;
+
     private static boolean gameOver = false;
     private boolean incXVel, decXVel, incYVel, decYVel;
     private PlayerShip playerShip = new PlayerShip();
@@ -51,7 +46,11 @@ public class SpaceShooter extends JPanel{
     public static void main(String[] args) {
         // Some java implementations don't seem to use hardware acceleration
         // by default. Force them to behave!
-        System.setProperty("sun.java2d.opengl", "True");
+        // Actually, it really depends on the implementation of the jvm
+        // on a specific computer: some are really slow w/o OpenGL, some are
+        // okay by default and glitch out when OpenGL is forced. Not sure
+        // how to handle this for now...
+        // System.setProperty("sun.java2d.opengl", "True");
         
         JFrame frame = new JFrame("Space Shooter");
 
@@ -89,30 +88,24 @@ public class SpaceShooter extends JPanel{
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-                // If left or right are pressed, make their booleans true
-                case LEFT: decXVel = true;
-                    break;
-                case RIGHT: incXVel = true;
-                    break;
-                case UP: incYVel = true;
-                    break;
-                case DOWN: decYVel = true;
-                    break;
+                // If arrow keys are pressed, make their booleans true
+                default:
+                break; case KeyEvent.VK_LEFT:     decXVel = true;
+                break; case KeyEvent.VK_RIGHT:    incXVel = true;
+                break; case KeyEvent.VK_DOWN:     decYVel = true;
+                break; case KeyEvent.VK_UP:       incYVel = true;
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-                // If left or right are released, make their booleans false
-                case LEFT: decXVel = false;
-                    break;
-                case RIGHT: incXVel = false;
-                    break;
-                case UP: incYVel = false;
-                    break;
-                case DOWN: decYVel = false;
-                    break;
+                // If arrow keys are released, make their booleans false
+                default:
+                break; case KeyEvent.VK_LEFT:     decXVel = false;
+                break; case KeyEvent.VK_RIGHT:    incXVel = false;
+                break; case KeyEvent.VK_DOWN:     decYVel = false;
+                break; case KeyEvent.VK_UP:       incYVel = false;
             }
         }
     }
