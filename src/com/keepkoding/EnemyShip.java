@@ -6,6 +6,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/** TODO Vaibhav: rewrite to represent one enemy instead of all of them,
+ *  and get it to use a proper sprite and extend the Ship class properly
+ *  to draw it.
+ */
 class EnemyShip extends Ship {
     private static final BufferedImage sprite =
         ImageLoader.load("enemyShip.png");
