@@ -6,11 +6,15 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 class PlayerShip extends Ship {
-    private static final BufferedImage sprite =
+    private static final BufferedImage playerSprite =
         ImageLoader.load("playerShip.png");
     
     private static final double acc = 0.1;
-
+    
+    // True if the corresponding key is being pressed by the player
+    // (up key = speedingUp, etc.), false otherwise.
+    boolean turningLeft, turningRight, speedingUp, slowingDown;
+    
     PlayerShip() {
         super(
             SpaceShooter.screenWidth * 0.5,     // x
@@ -18,7 +22,7 @@ class PlayerShip extends Ship {
             0,                                  // xVel
             0,                                  // yVel
             8.888,                              // maxVel
-            sprite                              // sprite
+            playerSprite                        // sprite
         );
     }
     
@@ -39,6 +43,6 @@ class PlayerShip extends Ship {
         x += xVel;
         y += yVel;
         
-        super.update();
+        updateBase();
     }
 }
