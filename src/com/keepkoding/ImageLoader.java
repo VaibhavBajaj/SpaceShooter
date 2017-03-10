@@ -7,8 +7,8 @@ import javax.imageio.ImageIO;
 
 class ImageLoader {
 
-    public static BufferedImage load(String name) {
-        URL url = ImageLoader.class.getResource("assets/" + name);
+    static BufferedImage load(String name) {
+        URL url = ImageLoader.class.getResource("assets/images/" + name);
         try {
             return ImageIO.read(url);
         } catch (IOException e) {

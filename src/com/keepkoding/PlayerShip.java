@@ -1,27 +1,28 @@
 package com.keepkoding;
 
-
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 
 class PlayerShip extends Ship {
-    private static final BufferedImage sprite =
-        ImageLoader.load("playerShip.png");
+    private static final int spriteSize = SpaceShooter.screenWidth / 45 * 4;
+    private static final Image sprite =
+        ImageLoader.load("playerShip.png").getScaledInstance(spriteSize, spriteSize, Image.SCALE_SMOOTH);
     
-    private static final double acc = 0.1;
+    private static final double acc = 0.4;
 
     PlayerShip() {
         super(
-            SpaceShooter.screenWidth * 0.5,     // x
-            SpaceShooter.screenHeight * 0.8,    // y
-            0,                                  // xVel
-            0,                                  // yVel
-            8.888,                              // maxVel
-            sprite                              // sprite
+            SpaceShooter.screenWidth * 0.5,
+            SpaceShooter.screenHeight * 0.8,
+            0,
+            0,
+            10,
+            spriteSize,
+            sprite
         );
     }
-    
+
+    private static boolean tmp;
+
     void update(boolean incXVel, boolean decXVel, boolean incYVel, boolean decYVel) {
         if(incXVel) {
             xVel += acc;
@@ -35,10 +36,6 @@ class PlayerShip extends Ship {
         if(decYVel) {
             yVel += acc;
         }
-
-        x += xVel;
-        y += yVel;
-        
-        super.update();
+        super.updateBase();
     }
 }
