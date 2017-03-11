@@ -1,11 +1,11 @@
 package com.keepkoding;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 class PlayerShip extends Ship {
     private static final int spriteSize = SpaceShooter.screenWidth / 45 * 4;
-    private static final Image sprite =
-        ImageLoader.load("playerShip.png").getScaledInstance(spriteSize, spriteSize, Image.SCALE_SMOOTH);
+    private static final BufferedImage sprite =
+        ImageLoader.load("playerShip.png");
     
     private static final double acc = 0.4;
 
@@ -21,8 +21,6 @@ class PlayerShip extends Ship {
         );
     }
 
-    private static boolean tmp;
-
     void update(boolean incXVel, boolean decXVel, boolean incYVel, boolean decYVel) {
         if(incXVel) {
             xVel += acc;
@@ -36,6 +34,24 @@ class PlayerShip extends Ship {
         if(decYVel) {
             yVel += acc;
         }
+
+        // This will be here since we will be having enemyShips outside boundaries
+        if (x < 0) {
+            xVel = 0;
+            x = 0;
+        } else if (x > SpaceShooter.screenWidth) {
+            xVel = 0;
+            x = 1440;
+        }
+
+        if (y < 0) {
+            yVel = 0;
+            y = 0;
+        } else if (y > SpaceShooter.screenHeight) {
+            yVel = 0;
+            y = 800;
+        }
+
         super.updateBase();
     }
 }

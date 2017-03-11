@@ -1,13 +1,15 @@
 package com.keepkoding;
 
-import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 class EnemyShip extends Ship {
 
     private static final int
             spriteSize = SpaceShooter.screenWidth / 45 * 4;
-    private static final Image sprite =
-        ImageLoader.load("enemyShip.png").getScaledInstance(spriteSize, spriteSize, Image.SCALE_SMOOTH);
+    private static final BufferedImage sprite =
+        ImageLoader.load("enemyShip.png");
+    private AffineTransform transform;
 
     EnemyShip() {
         super(
