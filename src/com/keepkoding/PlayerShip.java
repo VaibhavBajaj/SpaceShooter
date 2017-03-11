@@ -36,20 +36,20 @@ class PlayerShip extends Ship {
         }
 
         // This will be here since we will be having enemyShips outside boundaries
-        if (x < 0) {
+        if (x < spriteSize * 0.5) {
             xVel = 0;
-            x = 0;
-        } else if (x > SpaceShooter.screenWidth) {
+            x = spriteSize * 0.5;
+        } else if (x > SpaceShooter.screenWidth - (spriteSize * 0.5)) {
             xVel = 0;
-            x = 1440;
+            x = SpaceShooter.screenWidth - (spriteSize * 0.5);
         }
 
-        if (y < 0) {
+        if (y < spriteSize * 0.5) {
             yVel = 0;
-            y = 0;
-        } else if (y > SpaceShooter.screenHeight) {
+            y = spriteSize * 0.5;
+        } else if (y > SpaceShooter.screenHeight - (spriteSize * 0.5)) {
             yVel = 0;
-            y = 800;
+            y = SpaceShooter.screenHeight - (spriteSize * 0.5);
         }
 
         super.updateBase();
