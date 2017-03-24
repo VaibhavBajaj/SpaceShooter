@@ -11,6 +11,8 @@ class MusicLoader {
         URL url = MusicLoader.class.getResource("assets/music/" + name);
         try {
              clip = Applet.newAudioClip(url);
+             clip.loop();
+             clip.play();
         } catch (Exception e) {
             throw new RuntimeException("Could not load music clip '"
                     + name + "': '" + e.getMessage() + ".");

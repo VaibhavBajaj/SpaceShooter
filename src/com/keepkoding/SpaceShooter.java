@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -19,6 +20,7 @@ public class SpaceShooter extends JPanel{
     private GameBoard gameBoard = new GameBoard();
     private PlayerShip playerShip = new PlayerShip();
     private EnemyShip enemyShip = new EnemyShip();
+    private Asteroid asteroid = new Asteroid(playerShip.x, playerShip.y);
     private AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
     private SpaceShooter() {
@@ -44,6 +46,7 @@ public class SpaceShooter extends JPanel{
         gameBoard.paint(g2d);
         playerShip.paint(g2d);
         enemyShip.paint(g2d);
+        asteroid.paint(g2d);
     }
 
     public static void main(String[] args) {

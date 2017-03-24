@@ -1,7 +1,7 @@
 package com.keepkoding;
 
-import java.awt.geom.AffineTransform;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 abstract class Ship {
