@@ -6,7 +6,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import java.util.List;
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -19,7 +22,9 @@ public class SpaceShooter extends JPanel{
     private boolean incXVel, decXVel, incYVel, decYVel;
     private GameBoard gameBoard = new GameBoard();
     private PlayerShip playerShip = new PlayerShip();
-    private EnemyShip enemyShip = new EnemyShip();
+    
+    private ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
+    
     private Asteroid asteroid = new Asteroid(playerShip.x, playerShip.y);
     private AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
@@ -36,7 +41,9 @@ public class SpaceShooter extends JPanel{
 
     private void update() {
         playerShip.update(incXVel, decXVel, incYVel, decYVel);
-        enemyShip.update(playerShip.x, playerShip.y);
+        for (EnemyShip enemy : enemies) {
+            enemy.update(playerShip.x, playerShip.y);
+        }
     }
 
     @Override
@@ -45,7 +52,11 @@ public class SpaceShooter extends JPanel{
         Graphics2D g2d = (Graphics2D)g;
         gameBoard.paint(g2d);
         playerShip.paint(g2d);
-        enemyShip.paint(g2d);
+        
+        for (EnemyShip enemy : enemies) {
+            enemy.paint(g2d);
+        }
+        
         asteroid.paint(g2d);
     }
 
@@ -63,25 +74,10 @@ public class SpaceShooter extends JPanel{
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        /*
-        while (!gameOver) {
-            // Re-paint the screen
-            game.repaint();
-            // Update the values
-            game.update();
-            try {
-                // SLEEEEEEP. No, seriously. Pauses game for 10 ms
-                Thread.sleep(10);
-            }
-            catch (InterruptedException e) {
-                // If exception is caused, break out of the game Loop.
-                // Effectively hangs the game...
-                break;
-            }
+        
+        for (int i = 0; i < 5; ++i) {
+            game.enemies.add(new EnemyShip());
         }
-        */
-
 
         long lastTime = System.nanoTime();
         final double ns = 1000000000.0 / 60.0;

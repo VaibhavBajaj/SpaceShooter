@@ -11,11 +11,11 @@ class EnemyShip extends Ship {
 
     EnemyShip() {
         super(
+                randCoord(0, 600),  // XXX
+                randCoord(0, 600),
                 0,
                 0,
-                0,
-                0,
-                7,
+                randCoord(3, 7),    // XXX
                 spriteSize,
                 sprite
         );
@@ -27,7 +27,7 @@ class EnemyShip extends Ship {
         super.updateBase();
     }
 
-    private int randCoord(int min, int max) {
+    private static int randCoord(int min, int max) {
         return (int)(Math.random() * max) + min;
     }
 }
