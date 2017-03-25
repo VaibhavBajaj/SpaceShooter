@@ -3,54 +3,61 @@ package com.keepkoding;
 import java.awt.image.BufferedImage;
 
 class PlayerShip extends Ship {
-    private static final int spriteSize = SpaceShooter.screenWidth / 45 * 4;
-    private static final BufferedImage sprite =
-        ImageLoader.load("playerShip.png");
+    
+    private static final Description playerDescription =
+        new Description("playerShip.png", 0.08)
+        .setMaxVelocity(11.1)
+        .setCollisionDetection(.5, .58, 0.38);
     
     private static final double acc = 0.4;
 
     PlayerShip() {
         super(
+            playerDescription,
             SpaceShooter.screenWidth * 0.5,
             SpaceShooter.screenHeight * 0.8,
             0,
-            0,
-            10,
-            spriteSize,
-            sprite
+            0
         );
     }
 
     void update(boolean incXVel, boolean decXVel, boolean incYVel, boolean decYVel) {
         if(incXVel) {
-            xVel += acc;
+            setXVel(getXVel() + acc);
         }
         if(decXVel) {
-            xVel -= acc;
+            setXVel(getXVel() - acc);
         }
         if(incYVel) {
-            yVel -= acc;
+            setYVel(getYVel() - acc);
         }
         if(decYVel) {
-            yVel += acc;
+            setYVel(getYVel() + acc);
         }
 
-        // This will be here since we will be having enemyShips outside boundaries
-        if (x < spriteSize * 0.5) {
-            xVel = 0;
-            x = spriteSize * 0.5;
-        } else if (x > SpaceShooter.screenWidth - (spriteSize * 0.5)) {
-            xVel = 0;
-            x = SpaceShooter.screenWidth - (spriteSize * 0.5);
+        // Check if the player ship is starting to get off the screen.
+        // If it is, zero the x or y velocity depending on which edge it
+        // is touching, and move it back on screen.
+        double halfWidth = getWidth() * 0.5;
+        double halfHeight = getHeight() * 0.5;
+        double thisX = getX(), thisY = getY();
+        
+        if (thisX < halfWidth) {
+            setXVel(0.0);
+            setX(halfWidth);
+        } else if (thisX > SpaceShooter.screenWidth - halfWidth) {
+            setXVel(0.0);
+            setX(SpaceShooter.screenWidth - halfWidth);
         }
-
-        if (y < spriteSize * 0.5) {
-            yVel = 0;
-            y = spriteSize * 0.5;
-        } else if (y > SpaceShooter.screenHeight - (spriteSize * 0.5)) {
-            yVel = 0;
-            y = SpaceShooter.screenHeight - (spriteSize * 0.5);
+        
+        if (thisY < halfHeight) {
+            setYVel(0.0);
+            setY(halfHeight);
+        } else if (thisY > SpaceShooter.screenHeight - halfHeight) {
+            setYVel(0.0);
+            setY(SpaceShooter.screenHeight - halfHeight);
         }
+        
 
         super.updateBase();
     }

@@ -21,7 +21,9 @@ public class SpaceShooter extends JPanel{
     private static boolean gameOver = false;
     private boolean incXVel, decXVel, incYVel, decYVel;
     private GameBoard gameBoard = new GameBoard();
-    private PlayerShip playerShip = new PlayerShip();
+    
+    // XXX MAKE ALL OF THESE VARIABLES STATIC EVENTUALLY.
+    static PlayerShip playerShip = new PlayerShip();
     
     private ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
     
