@@ -196,6 +196,9 @@ abstract class Ship {
     protected final void setY(double arg) { y = arg; }
     protected final void setXVel(double arg) { xVel = arg; }
     protected final void setYVel(double arg) { yVel = arg; }
+    protected static int randCoord(int min, int max) {
+        return (int)(Math.random() * max) + min;
+    }
     
     protected final void setPosition(double argX, double argY) {
         x = argX;

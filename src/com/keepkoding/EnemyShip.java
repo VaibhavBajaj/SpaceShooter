@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 class EnemyShip extends Ship {
 
     private static final int
-            spriteSize = SpaceShooter.screenWidth / 45 * 4;
+            spriteSize = SpaceShooter.screenWidth / 45 * 4,
+            slowVel = 3,
+            fastVel = 7;
     private static final BufferedImage sprite =
         ImageLoader.load("enemyShip.png");
 
@@ -15,7 +17,7 @@ class EnemyShip extends Ship {
                 randCoord(0, 600),
                 0,
                 0,
-                randCoord(3, 7),    // XXX
+                randCoord(slowVel, fastVel),    // XXX
                 spriteSize,
                 sprite
         );
@@ -27,7 +29,5 @@ class EnemyShip extends Ship {
         super.updateBase();
     }
 
-    private static int randCoord(int min, int max) {
-        return (int)(Math.random() * max) + min;
-    }
+
 }

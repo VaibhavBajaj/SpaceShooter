@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import java.util.List;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -18,17 +17,24 @@ public class SpaceShooter extends JPanel{
     static final int
             screenWidth = 1440,
             screenHeight = 800;
-    private static boolean gameOver = false;
-    private boolean incXVel, decXVel, incYVel, decYVel;
-    private GameBoard gameBoard = new GameBoard();
+    static int
+            enemyShipCount = 1,
+            asteroidCount = 1;
+    private static boolean
+            gameOver = false,
+            incXVel,
+            decXVel,
+            incYVel,
+            decYVel;
+    private static GameBoard gameBoard = new GameBoard();
     
     // XXX MAKE ALL OF THESE VARIABLES STATIC EVENTUALLY.
     static PlayerShip playerShip = new PlayerShip();
     
-    private ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
-    
-    private Asteroid asteroid = new Asteroid(playerShip.x, playerShip.y);
-    private AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
+    private static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
+    private static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
+
+    private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
     private SpaceShooter() {
         incXVel = decXVel = incYVel = decYVel = false;
@@ -58,8 +64,9 @@ public class SpaceShooter extends JPanel{
         for (EnemyShip enemy : enemies) {
             enemy.paint(g2d);
         }
-        
-        asteroid.paint(g2d);
+        for (Asteroid asteroid : asteroids) {
+            asteroid.paint(g2d);
+        }
     }
 
     public static void main(String[] args) {
@@ -77,8 +84,11 @@ public class SpaceShooter extends JPanel{
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
-        for (int i = 0; i < 5; ++i) {
-            game.enemies.add(new EnemyShip());
+        for (int i = 0; i < enemyShipCount; ++i) {
+            enemies.add(new EnemyShip());
+        }
+        for (int i = 0; i < asteroidCount; ++i) {
+            asteroids.add(new Asteroid(playerShip.x, playerShip.y));
         }
 
         long lastTime = System.nanoTime();
