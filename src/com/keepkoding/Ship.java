@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import sun.jvm.hotspot.memory.Space;
 
 /** Abstract base  class  for  Ships  in  the  game.  The  class  is  mainly
  *  responsible for four things:
@@ -36,17 +34,13 @@ abstract class Ship {
     // for transformation methods.
     private Point2D.Double tmpPoint = new Point2D.Double();
     
-    // The ship will be stopped if it travels below this velocity.
-    // This is used in particular to avoid doing math on denormalized numbers.
-    private static double minVel = 0.001;
     private static final int errorRange = (int)(SpaceShooter.screenWidth / 7.2);
     
     static boolean drawCollisionDebug = true;
     
     private Description d;
     
-    // This should be private in the future.
-    private double x, y, xVel, yVel;
+    private double x, y, angle, speed;
 
     Ship(Description d, double xVel, double yVel) {
         this.d = d;
@@ -96,42 +90,26 @@ abstract class Ship {
      *  private transformation matrix in preparation of repainting.
      */
     final void updateBase() {
-        double velocity = Math.hypot(xVel, yVel);
+        // Reduce the speed if we are exceeding the maximum allowed velocity.
+        speed = Math.min(speed, d.maxVelocity_);
 
-        // Stop the ship if velocity is below minVel.
-        // This is needed to prevent inaccurate transformation matrices,
-        // and the player is unlikely to notice.
-        if (velocity < minVel) {
-            xVel = 0.0;
-            yVel = 0.0;
-            velocity = 0.0;
-        }
-        
-        // Reduce the velocities if we are exceeding maxVel.
-        double maxVel = d.maxVelocity_;
-        if (velocity > maxVel) {
-            double scaleFactor = maxVel / velocity;
-            xVel *= scaleFactor;
-            yVel *= scaleFactor;
-            velocity = maxVel;
-        }
-
-        // If velocity != 0, we need to reset the transformation matrix.
-        if (velocity != 0.0) {
-            double cos = yVel / velocity;
-            double sin = -xVel / velocity;
+        // If speed != 0, we need to reset the transformation matrix
+        // and move the object through space.
+        if (speed != 0.0) {
+            double cos = Math.cos(angle);
+            double sin = Math.sin(angle);
 
             // Magic center + rotate + translate matrix.
             double ax = d.anchorX_, ay = d.anchorY_;
             transform.setTransform(
-                cos, sin,
                 sin, -cos,
-                x - ax*cos - ay*sin, y - ax*sin + ay*cos
+                -cos, -sin,
+                x - ax*sin + ay*cos, y + ax*cos + ay*sin
             );
+            
+            x += cos * speed;
+            y += sin * speed;
         }
-
-        x += xVel;
-        y += yVel;
     }
     
     /** Return the width of the sprite used to render this object.
@@ -200,25 +178,44 @@ abstract class Ship {
         return circleDistance < totalRadius;
     }
     
-    protected final double getX() { return x; }
-    protected final double getY() { return y; }
-    protected final double getXVel() { return xVel; }
-    protected final double getYVel() { return yVel; }
-    protected final void setX(double arg) { x = arg; }
-    protected final void setY(double arg) { y = arg; }
-    protected final void setXVel(double arg) { xVel = arg; }
-    protected final void setYVel(double arg) { yVel = arg; }
-    protected static int randCoord(int min, int max) {
-        return (int)(Math.random() * max) + min;
-    }
+    final double getX() { return x; }
+    final double getY() { return y; }
+    final double getXVel() { return speed * Math.cos(angle); }
+    final double getYVel() { return speed * Math.sin(angle); }
+    final double getSpeed() { return speed; }
+    final double getAngle() { return angle; }
     
+    protected final void setX(double arg) {
+        x = arg;
+    }
+    protected final void setY(double arg) {
+        y = arg;
+    }
     protected final void setPosition(double argX, double argY) {
         x = argX;
         y = argY;
     }
-    protected final void setVelocity(double argX, double argY) {
-        xVel = argX;
-        yVel = argY;
+    /** Set the velocity of this object using cartesian coordinates.
+     */
+    protected final void setVelocity(double xVel, double yVel) {
+        angle = Math.atan2(yVel, xVel);
+        speed = Math.hypot(yVel, xVel);
+    }
+    protected final void setSpeed(double speed) {
+        this.speed = speed;
+    }
+    protected final void setAngle(double angle) {
+        this.angle = angle;
+    }
+    protected final void setXVel(double xVel) {
+        setVelocity(xVel, getYVel());
+    }
+    protected final void setYVel(double yVel) {
+        setVelocity(getXVel(), yVel);
+    }
+    
+    protected static int randCoord(int min, int max) {
+        return (int)(Math.random() * max) + min;
     }
 }
 

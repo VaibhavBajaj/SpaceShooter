@@ -84,7 +84,7 @@ public class SpaceShooter extends JPanel{
             enemies.add(new EnemyShip());
         }
         for (int i = 0; i < asteroidCount; ++i) {
-            asteroids.add(new Asteroid(0, 0));
+            asteroids.add(new Asteroid());
         }
 
         long lastTime = System.nanoTime();

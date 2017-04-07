@@ -58,7 +58,6 @@ class PlayerShip extends Ship {
             setY(SpaceShooter.screenHeight - halfHeight);
         }
         
-
         super.updateBase();
     }
 }
