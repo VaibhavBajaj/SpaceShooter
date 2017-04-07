@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import sun.jvm.hotspot.memory.Space;
 
 /** Abstract base  class  for  Ships  in  the  game.  The  class  is  mainly
  *  responsible for four things:
@@ -38,6 +39,7 @@ abstract class Ship {
     // The ship will be stopped if it travels below this velocity.
     // This is used in particular to avoid doing math on denormalized numbers.
     private static double minVel = 0.001;
+    private static final int errorRange = (int)(SpaceShooter.screenWidth / 7.2);
     
     static boolean drawCollisionDebug = true;
     
@@ -45,22 +47,32 @@ abstract class Ship {
     
     // This should be private in the future.
     private double x, y, xVel, yVel;
-    
-    /** Initialize  the  Ship  with  its  basic  information:  its   initial
-     *  position,  velocity,  and  speed  limit, and the BufferedImage to be
-     *  drawn to represent the ship on screen.
-     *  DEPRECATED: Use the new Description class based constructor.
-     */
-    @Deprecated
-    Ship(
-        double x, double y,
-        double xVel, double yVel,
-        double maxVel, double spriteSize, BufferedImage sprite
-    ) {
-        this(
-            new Description(sprite, spriteSize / SpaceShooter.screenWidth)
-            .setMaxVelocity(maxVel).setCollisionDetection(0.5),
-            x, y, xVel, yVel
+
+    Ship(Description d, double xVel, double yVel) {
+        this.d = d;
+        switch(randCoord(0,3)) {
+            case 0:
+                this.x = randCoord(-1 * errorRange, 0);
+                this.y = randCoord(-1 * errorRange, SpaceShooter.screenHeight + errorRange);
+                break;
+            case 1:
+                this.x = randCoord(SpaceShooter.screenWidth, SpaceShooter.screenWidth + errorRange);
+                this.y = randCoord(-1 * errorRange, SpaceShooter.screenHeight + errorRange);
+                break;
+            case 2:
+                this.x = randCoord(-1 * errorRange, SpaceShooter.screenWidth + errorRange);
+                this.y = randCoord(-1 * errorRange, 0);
+                break;
+            case 3:
+                this.x = randCoord(-1 * errorRange, SpaceShooter.screenWidth + errorRange);
+                this.y = randCoord(SpaceShooter.screenHeight, SpaceShooter.screenHeight + errorRange);
+                break;
+        }
+        this.setXVel(xVel);
+        this.setYVel(yVel);
+
+        this.transform = AffineTransform.getTranslateInstance(
+                x - d.anchorX_, y - d.anchorY_
         );
     }
     
@@ -71,8 +83,8 @@ abstract class Ship {
         this.d = d;
         this.x = x;
         this.y = y;
-        this.xVel = xVel;
-        this.yVel = yVel;
+        this.setXVel(xVel);
+        this.setYVel(yVel);
         
         this.transform = AffineTransform.getTranslateInstance(
             x - d.anchorX_, y - d.anchorY_

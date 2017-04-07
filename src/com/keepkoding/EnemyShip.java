@@ -19,8 +19,6 @@ class EnemyShip extends Ship {
     EnemyShip() {
         super(
             enemyDescription,
-            randCoord(0, 600),
-            randCoord(0, 600),
             randCoord(slowVel, fastVel),
             randCoord(slowVel, fastVel)
         );

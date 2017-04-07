@@ -38,7 +38,7 @@ final class Description {
     double maxVelocity_ = 5.0;
     
     // All values here are in pixels.
-    double collisionRadius_ = -1./0.;
+    double collisionRadius_ = -1;
     double anchorX_, anchorY_;
     Point2D.Double collisionCenter_ = new Point2D.Double(0, 0);
     
