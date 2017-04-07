@@ -45,6 +45,9 @@ public class SpaceShooter extends JPanel{
         for (EnemyShip enemy : enemies) {
             enemy.update();
         }
+        for (Asteroid asteroid : asteroids) {
+            asteroid.update();
+        }
     }
 
     @Override
