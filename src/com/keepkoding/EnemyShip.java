@@ -5,21 +5,24 @@ import java.awt.image.BufferedImage;
 class EnemyShip extends Ship {
 
     private static final int
-            spriteSize = SpaceShooter.screenWidth / 45 * 4,
             slowVel = 3,
             fastVel = 7;
+
+    private static final Description enemyDescription =
+            new Description("enemyShip.png", 0.08)
+                    .setMaxVelocity(fastVel)
+                    .setCollisionDetection(.5, .47, 0.58);
+
     private static final BufferedImage sprite =
         ImageLoader.load("enemyShip.png");
 
     EnemyShip() {
         super(
-                randCoord(0, 600),  // XXX
+                enemyDescription,
                 randCoord(0, 600),
-                0,
-                0,
-                randCoord(slowVel, fastVel),    // XXX
-                spriteSize,
-                sprite
+                randCoord(0, 600),
+                randCoord(slowVel, fastVel),
+                randCoord(slowVel, fastVel)
         );
     }
 
@@ -28,6 +31,5 @@ class EnemyShip extends Ship {
         yVel = y - this.y;
         super.updateBase();
     }
-
 
 }

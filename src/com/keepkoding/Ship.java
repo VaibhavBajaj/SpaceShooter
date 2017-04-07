@@ -39,7 +39,7 @@ abstract class Ship {
     // This is used in particular to avoid doing math on denormalized numbers.
     private static double minVel = 0.001;
     
-    static boolean drawCollisionDebug = true;
+    static boolean drawCollisionDebug = truse;
     
     private Description d;
     
