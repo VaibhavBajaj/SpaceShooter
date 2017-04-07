@@ -1,6 +1,9 @@
 
 package com.keepkoding;
 
+import java.awt.RenderingHints;
+import java.awt.Image;
+import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
@@ -39,6 +42,28 @@ final class Description {
     double anchorX_, anchorY_;
     Point2D.Double collisionCenter_ = new Point2D.Double(0, 0);
     
+    // I'm trying to do some testing of AffineTransformOp's hint argument
+    // to see if I can get nice scaling without the performance loss
+    // that Image.getScaledInstance somehow entails.
+    private static final RenderingHints hints;
+    
+    static {
+        hints = new RenderingHints(
+                  RenderingHints.KEY_ANTIALIASING, 
+                  RenderingHints.VALUE_ANTIALIAS_ON
+                );
+        hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                  RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        hints.put(RenderingHints.KEY_COLOR_RENDERING,     
+                  RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        hints.put(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        hints.put(RenderingHints.KEY_RENDERING,
+                  RenderingHints.VALUE_RENDER_QUALITY);
+        hints.put(RenderingHints.KEY_STROKE_CONTROL,
+                  RenderingHints.VALUE_STROKE_NORMALIZE);
+    }
+    
     /** Create a new description  object  using  a  scaled  version  of  the
      *  argument sprite. The sprite used to render the Ship parameterized by
      *  this Description object will have a diagonal  that  is  diagonalSize
@@ -57,12 +82,27 @@ final class Description {
         
         double scale = diagonalSize * screenDiagonal / rawSpriteDiagonal;
         
-        AffineTransformOp op = new AffineTransformOp(
-            AffineTransform.getScaleInstance(scale, scale),
-            AffineTransformOp.TYPE_BILINEAR
+        int width = (int)(scale * rawSprite.getWidth() + 0.5);
+        int height = (int)(scale * rawSprite.getHeight() + 0.5);
+        
+        scaledSprite_ = new BufferedImage(
+            width, height, BufferedImage.TYPE_INT_ARGB
         );
         
-        scaledSprite_ = op.filter(rawSprite, null);
+        // Code adapted from StackOverflow user "Hovercraft Full Of Eels".
+        Image toolkitImage = rawSprite.getScaledInstance(
+            width, height, Image.SCALE_SMOOTH
+        );
+        
+        Graphics g = scaledSprite_.getGraphics();
+        try {
+            boolean success = g.drawImage(toolkitImage, 0, 0, null);
+            if (!success) {
+                throw new RuntimeException("Failed to scale image.");
+            }
+        } finally {
+            g.dispose();
+        }
         
         // By default, the center of the sprite will be treated
         // as the anchor point.
