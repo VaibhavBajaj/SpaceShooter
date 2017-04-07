@@ -5,23 +5,18 @@ import java.awt.image.BufferedImage;
 class EnemyShip extends Ship {
 
     private static final int
-            slowVel = 3,
-            fastVel = 7;
+            maxVel = 7;
 
     private static final Description enemyDescription =
             new Description("enemyShip.png", 0.08)
-                    .setMaxVelocity(fastVel)
+                    .setMaxVelocity(maxVel)
                     .setCollisionDetection(.5, .47, 0.58);
 
     private static final BufferedImage sprite =
         ImageLoader.load("enemyShip.png");
 
     EnemyShip() {
-        super(
-            enemyDescription,
-            randCoord(slowVel, fastVel),
-            randCoord(slowVel, fastVel)
-        );
+        super(enemyDescription);
     }
 
     void update() {

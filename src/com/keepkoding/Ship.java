@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import sun.jvm.hotspot.memory.Space;
 
 /** Abstract base  class  for  Ships  in  the  game.  The  class  is  mainly
  *  responsible for four things:
@@ -48,7 +46,7 @@ abstract class Ship {
     // This should be private in the future.
     private double x, y, xVel, yVel;
 
-    Ship(Description d, double xVel, double yVel) {
+    Ship(Description d) {
         this.d = d;
         switch(randCoord(0,3)) {
             case 0:
@@ -68,8 +66,8 @@ abstract class Ship {
                 this.y = randCoord(SpaceShooter.screenHeight, SpaceShooter.screenHeight + errorRange);
                 break;
         }
-        this.setXVel(xVel);
-        this.setYVel(yVel);
+        this.setVelocity(randCoord(0, SpaceShooter.screenWidth) - this.x,
+                randCoord(0, SpaceShooter.screenHeight) - this.y);
 
         this.transform = AffineTransform.getTranslateInstance(
                 x - d.anchorX_, y - d.anchorY_
