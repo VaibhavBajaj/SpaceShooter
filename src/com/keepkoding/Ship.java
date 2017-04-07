@@ -39,12 +39,12 @@ abstract class Ship {
     // This is used in particular to avoid doing math on denormalized numbers.
     private static double minVel = 0.001;
     
-    static boolean drawCollisionDebug = truse;
+    static boolean drawCollisionDebug = true;
     
     private Description d;
     
     // This should be private in the future.
-    protected double x, y, xVel, yVel;
+    private double x, y, xVel, yVel;
     
     /** Initialize  the  Ship  with  its  basic  information:  its   initial
      *  position,  velocity,  and  speed  limit, and the BufferedImage to be

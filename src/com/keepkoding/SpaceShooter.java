@@ -22,13 +22,12 @@ public class SpaceShooter extends JPanel{
             asteroidCount = 1;
     private static boolean
             gameOver = false,
-            incXVel,
-            decXVel,
-            incYVel,
-            decYVel;
+            incXVel = false,
+            decXVel = false,
+            incYVel = false,
+            decYVel = false;
     private static GameBoard gameBoard = new GameBoard();
     
-    // XXX MAKE ALL OF THESE VARIABLES STATIC EVENTUALLY.
     static PlayerShip playerShip = new PlayerShip();
     
     private static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
@@ -37,20 +36,14 @@ public class SpaceShooter extends JPanel{
     private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
     private SpaceShooter() {
-        incXVel = decXVel = incYVel = decYVel = false;
-
-        //Adding key listener
-        KeyListener listener = new MyKeyListener();
-        addKeyListener(listener);
+        addKeyListener(new MyKeyListener());
         setFocusable(true);
-
-        bgSound.loop();
     }
 
-    private void update() {
+    private static void updateGame() {
         playerShip.update(incXVel, decXVel, incYVel, decYVel);
         for (EnemyShip enemy : enemies) {
-            enemy.update(playerShip.x, playerShip.y);
+            enemy.update();
         }
     }
 
@@ -75,12 +68,15 @@ public class SpaceShooter extends JPanel{
         System.setProperty("sun.java2d.opengl", "True");
         
         JFrame frame = new JFrame("Space Shooter");
-
-        SpaceShooter game = new SpaceShooter();
-        game.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        frame.add(game);
+        
+        SpaceShooter gamePanel = new SpaceShooter();
+        
+        gamePanel.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        frame.add(gamePanel);
         frame.pack();
-
+        
+        bgSound.loop();
+        
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
@@ -88,7 +84,7 @@ public class SpaceShooter extends JPanel{
             enemies.add(new EnemyShip());
         }
         for (int i = 0; i < asteroidCount; ++i) {
-            asteroids.add(new Asteroid(playerShip.x, playerShip.y));
+            asteroids.add(new Asteroid(0, 0));
         }
 
         long lastTime = System.nanoTime();
@@ -104,8 +100,8 @@ public class SpaceShooter extends JPanel{
 
             }
             while (delta >= 1) {
-                game.repaint();
-                game.update();
+                gamePanel.repaint();
+                updateGame();
                 delta--;
             }
         }

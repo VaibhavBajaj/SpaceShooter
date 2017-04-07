@@ -18,17 +18,17 @@ class EnemyShip extends Ship {
 
     EnemyShip() {
         super(
-                enemyDescription,
-                randCoord(0, 600),
-                randCoord(0, 600),
-                randCoord(slowVel, fastVel),
-                randCoord(slowVel, fastVel)
+            enemyDescription,
+            randCoord(0, 600),
+            randCoord(0, 600),
+            randCoord(slowVel, fastVel),
+            randCoord(slowVel, fastVel)
         );
     }
 
-    void update(double x, double y) {
-        xVel = x - this.x;
-        yVel = y - this.y;
+    void update() {
+        this.setXVel(SpaceShooter.playerShip.getX() - this.getX());
+        this.setYVel(SpaceShooter.playerShip.getY() - this.getY());
         super.updateBase();
     }
 
