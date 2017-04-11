@@ -2,7 +2,7 @@ package com.keepkoding;
 
 import java.awt.image.BufferedImage;
 
-class EnemyShip extends Ship {
+class EnemyShip extends GameObj {
 
     private static final int
             maxVel = 7;

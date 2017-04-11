@@ -1,8 +1,6 @@
 package com.keepkoding;
 
-import java.awt.image.BufferedImage;
-
-class PlayerShip extends Ship {
+class PlayerShip extends GameObj {
     
     private static final Description playerDescription =
         new Description("playerShip.png", 0.08)

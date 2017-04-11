@@ -13,20 +13,20 @@ import java.awt.geom.Point2D;
  *   > Updating the position of a ship each frame given its position & velocity.
  *   > Enforcing the speed limit (maxVel) for the ship and slowing it if needed.
  *  
- *  To use this class, extend your own Ship class using this Ship class as a
+ *  To use this class, extend your own GameObj class using this GameObj class as a
  *  base,  and  construct  the  base  with the initial x and y positions and
- *  velocities, the speed limit for your Ship (maxVel), and a  BufferedImage
+ *  velocities, the speed limit for your GameObj (maxVel), and a  BufferedImage
  *  that  will  be  used  as  the sprite for your ship. To change the ship's
  *  position or velocity, just directly modify  the  x,  y,  xVel,  or  yVel
  *  variables  in  this class, and call updateBase() each tick to update the
  *  ship's  position  and  velocity  based  on  its  velocity   and   maxVel
- *  respectively  (this  usually  would  be  done  in your own Ship's update
+ *  respectively  (this  usually  would  be  done  in your own GameObj's update
  *  method). To paint the ship, call  paint(Graphics2D)  on  the  Graphics2D
  *  object  you  want  the  ship  painted on; you may either leave the paint
  *  method as-is or override it  and  call  super.paint  in  your  overrided
  *  method.
  */
-abstract class Ship {
+abstract class GameObj {
     // The transformation used to draw the sprite.
     private AffineTransform transform;
     
@@ -42,7 +42,7 @@ abstract class Ship {
     
     private double x, y, angle, speed;
     
-    /** Initialize the Ship with its  basic  information  specified  in  the
+    /** Initialize the GameObj with its  basic  information  specified  in  the
      *  description  object,  and  set  the initial coordinates and velocity
      *  randomly, subject to these rules:
      *  The position will be a random  off-screen  coordinate,  with  a  1/4
@@ -51,7 +51,7 @@ abstract class Ship {
      *  The velocity will be towards  some  random  coordinate  that  is  on
      *  screen.
      */
-    Ship(Description d) {
+    GameObj(Description d) {
         this.d = d;
         switch (randCoord(0,3)) {
             case 0:
@@ -79,10 +79,10 @@ abstract class Ship {
         );
     }
     
-    /** Initialized the Ship with its basic  information  specified  in  the
+    /** Initialized the GameObj with its basic  information  specified  in  the
      *  Description object, and set the initial coordinate and velocity.
      */
-    Ship(Description d, double x, double y, double xVel, double yVel) {
+    GameObj(Description d, double x, double y, double xVel, double yVel) {
         this.d = d;
         this.x = x;
         this.y = y;
@@ -170,10 +170,10 @@ abstract class Ship {
         }
     }
     
-    /** Return whether this Ship and that Ship  have  overlapping  collision
+    /** Return whether this GameObj and that GameObj  have  overlapping  collision
      *  circles (as defined by their respective Description objects).
      */
-    final boolean checkCollision(Ship that) {
+    final boolean checkCollision(GameObj that) {
         // First, transform the two ships' collision circle centers from
         // their specified coordinates to world coordinates.
         this.transform.transform(this.d.collisionCenter_, this.tmpPoint);

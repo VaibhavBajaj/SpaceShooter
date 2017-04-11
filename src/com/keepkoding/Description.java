@@ -15,10 +15,10 @@ import java.awt.image.BufferedImage;
  *  in their respective setters. Create an instance of this class by calling
  *  the constructor using the sprite and diagonal size that you  want,  then
  *  "chain"  setters to that constructor call to add behavior that you want,
- *  then pass the created object to the Ship class  constructor  to  control
- *  the Ship's behavior. Please treat the instance variables as if they were
+ *  then pass the created object to the GameObj class  constructor  to  control
+ *  the GameObj's behavior. Please treat the instance variables as if they were
  *  private, and do not call any setters once the object is  passed  to  the
- *  Ship constructor.
+ *  GameObj constructor.
  *  
  *  Example syntax:
  *      new Description("foo.png", 1337.)
@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage;
  *      .setCollisionDetection(.5, .5, 100.);
  */
 final class Description {
-    // Instance variables are public because the Ship class needs to access
+    // Instance variables are public because the GameObj class needs to access
     // them, and java does not support class friendship :( Please do not
     // write or read them yourself. The design of this class may be changed
     // later. Use the methods to manipulate the variables.
@@ -65,7 +65,7 @@ final class Description {
     }
     
     /** Create a new description  object  using  a  scaled  version  of  the
-     *  argument sprite. The sprite used to render the Ship parameterized by
+     *  argument sprite. The sprite used to render the GameObj parameterized by
      *  this Description object will have a diagonal  that  is  diagonalSize
      *  times  the diagonal of the screen. For example, if the screen is 500
      *  by 1200 pixels (1300 pixel diagonal), rawSprite has a size of 660 by

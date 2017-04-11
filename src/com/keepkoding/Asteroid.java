@@ -1,6 +1,6 @@
 package com.keepkoding;
 
-public class Asteroid extends Ship {
+public class Asteroid extends GameObj {
     private static final Description asteroidDescription = 
         new Description("asteroidPic1.png", .12)
         .setMaxVelocity(4.5)
