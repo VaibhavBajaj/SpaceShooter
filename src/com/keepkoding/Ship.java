@@ -41,10 +41,19 @@ abstract class Ship {
     private Description d;
     
     private double x, y, angle, speed;
-
+    
+    /** Initialize the Ship with its  basic  information  specified  in  the
+     *  description  object,  and  set  the initial coordinates and velocity
+     *  randomly, subject to these rules:
+     *  The position will be a random  off-screen  coordinate,  with  a  1/4
+     *  chance  of  being  to the left of the left edge, 1/4 chance of being
+     *  above the top edge, and so on.
+     *  The velocity will be towards  some  random  coordinate  that  is  on
+     *  screen.
+     */
     Ship(Description d) {
         this.d = d;
-        switch(randCoord(0,3)) {
+        switch (randCoord(0,3)) {
             case 0:
                 this.x = randCoord(-1 * errorRange, 0);
                 this.y = randCoord(-1 * errorRange, SpaceShooter.screenHeight + errorRange);
@@ -62,8 +71,8 @@ abstract class Ship {
                 this.y = randCoord(SpaceShooter.screenHeight, SpaceShooter.screenHeight + errorRange);
                 break;
         }
-        this.setVelocity(randCoord(0, SpaceShooter.screenWidth) - this.x,
-                randCoord(0, SpaceShooter.screenHeight) - this.y);
+        this.setVelocity(randCoord(1, SpaceShooter.screenWidth-1) - this.x,
+                randCoord(1, SpaceShooter.screenHeight-1) - this.y);
 
         this.transform = AffineTransform.getTranslateInstance(
                 x - d.anchorX_, y - d.anchorY_
