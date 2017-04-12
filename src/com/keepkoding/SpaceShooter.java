@@ -57,13 +57,14 @@ public class SpaceShooter extends JPanel{
         int asteroidCount = asteroids.size();
         int enemyCount = enemies.size();
         
+        tmpAsteroids.clear();
         for (int i = 0; i < asteroidCount; ++i) {
             // Use the temporary ArrayList to purge all asteroids that are
             // off screen and will not return. Swap the temporary ArrayList
             // with the main asteroids ArrayList, and use the object that was
             // formerly the main ArrayList as the temporary for the next tick.
             Asteroid a = asteroids.get(i);
-            tmpAsteroids.clear();
+            
             
             // Check collisions with the player, update & keep asteroids
             // that are still on-screen or heading to the screen.
@@ -75,22 +76,14 @@ public class SpaceShooter extends JPanel{
                 a.update();
                 tmpAsteroids.add(a);
             }
-            ArrayList<Asteroid> swapTmp = asteroids;
-            asteroids = tmpAsteroids;
-            tmpAsteroids = swapTmp;
-            
-            // Add another asteroid if now is the time to do it.
-            if (nextAsteroidSpawnTick == currentTick) {
-                asteroids.add(new Asteroid());
-                nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
-            }
-            
-            System.err.println("Asteroid count: " + asteroids.size());
         }
+        ArrayList<Asteroid> swapTmpAsteroids = asteroids;
+        asteroids = tmpAsteroids;
+        tmpAsteroids = swapTmpAsteroids;
         
+        tmpEnemies.clear();
         for (int i = 0; i < enemyCount; ++i) {
             EnemyShip e = enemies.get(i);
-            tmpEnemies.clear();
             
             // If an enemy is colliding with an asteroid, remove it from
             // the array list by not adding it to the temporary enemies,
@@ -102,16 +95,21 @@ public class SpaceShooter extends JPanel{
                 e.update();
                 tmpEnemies.add(e);
             }
-            
-            ArrayList<EnemyShip> swapTmp = enemies;
-            enemies = tmpEnemies;
-            tmpEnemies = swapTmp;
-            
-            // Add another enemy if now is the time to do it.
-            if (nextEnemySpawnTick == currentTick) {
-                enemies.add(new EnemyShip());
-                nextEnemySpawnTick += ticksPerEnemySpawn;
-            }
+        }
+        ArrayList<EnemyShip> swapTmpEnemies = enemies;
+        enemies = tmpEnemies;
+        tmpEnemies = swapTmpEnemies;
+        
+        // Add another asteroid if now is the time to do it.
+        if (nextAsteroidSpawnTick == currentTick) {
+            asteroids.add(new Asteroid());
+            nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
+        }
+        
+        // Add another enemy if now is the time to do it.
+        if (nextEnemySpawnTick == currentTick) {
+            enemies.add(new EnemyShip());
+            nextEnemySpawnTick += ticksPerEnemySpawn;
         }
     }
     

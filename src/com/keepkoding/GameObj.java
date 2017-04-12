@@ -101,23 +101,19 @@ abstract class GameObj {
         // Reduce the speed if we are exceeding the maximum allowed velocity.
         speed = Math.min(speed, d.maxVelocity_);
 
-        // If speed != 0, we need to reset the transformation matrix
-        // and move the object through space.
-        if (speed != 0.0) {
-            double cos = Math.cos(angle);
-            double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
 
-            // Magic center + rotate + translate matrix.
-            double ax = d.anchorX_, ay = d.anchorY_;
-            transform.setTransform(
-                sin, -cos,
-                -cos, -sin,
-                x - ax*sin + ay*cos, y + ax*cos + ay*sin
-            );
-            
-            x += cos * speed;
-            y += sin * speed;
-        }
+        // Magic center + rotate + translate matrix.
+        double ax = d.anchorX_, ay = d.anchorY_;
+        transform.setTransform(
+            sin, -cos,
+            -cos, -sin,
+            x - ax*sin + ay*cos, y + ax*cos + ay*sin
+        );
+        
+        x += cos * speed;
+        y += sin * speed;
     }
     
     /** Transform and draw the sprite on the specified Graphics2D object.
