@@ -33,9 +33,9 @@ public class SpaceShooter extends JPanel{
     private static GameBoard gameBoard = new GameBoard();
     
     static PlayerShip playerShip = new PlayerShip();
+    static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
+    static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
     
-    private static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
-    private static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
     private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();
 
