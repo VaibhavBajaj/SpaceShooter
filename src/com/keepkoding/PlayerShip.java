@@ -4,10 +4,13 @@ class PlayerShip extends GameObj {
     
     private static final Description playerDescription =
         new Description("playerShip.png", 0.08)
-        .setMaxVelocity(11.1)
+        .setMaxVelocity(30.0)
         .setCollisionDetection(.5, .58, 0.38);
     
-    private static final double acc = 0.4;
+    private static final double
+            speedAcc = 1,
+            angularAcc = 0.2,
+            bounceDampener = -0.7;
 
     PlayerShip() {
         super(
@@ -15,22 +18,22 @@ class PlayerShip extends GameObj {
             SpaceShooter.screenWidth * 0.5,
             SpaceShooter.screenHeight * 0.8,
             0,
-            0
+            -0.0000000001
         );
     }
 
-    void update(boolean incXVel, boolean decXVel, boolean incYVel, boolean decYVel) {
-        if(incXVel) {
-            setXVel(getXVel() + acc);
+    void update(boolean incSpeed, boolean decSpeed, boolean incAngle, boolean decAngle) {
+        if(incSpeed) {
+            addSpeed(speedAcc);
         }
-        if(decXVel) {
-            setXVel(getXVel() - acc);
+        if(decSpeed) {
+            addSpeed(-1 * speedAcc);
         }
-        if(incYVel) {
-            setYVel(getYVel() - acc);
+        if(incAngle) {
+            addAngle(angularAcc);
         }
-        if(decYVel) {
-            setYVel(getYVel() + acc);
+        if(decAngle) {
+            addAngle(-1 * angularAcc);
         }
 
         // Check if the player ship is starting to get off the screen.
@@ -41,18 +44,18 @@ class PlayerShip extends GameObj {
         double thisX = getX(), thisY = getY();
         
         if (thisX < halfWidth) {
-            setXVel(0.0);
+            setXVel(bounceDampener * getXVel());
             setX(halfWidth);
         } else if (thisX > SpaceShooter.screenWidth - halfWidth) {
-            setXVel(0.0);
+            setXVel(bounceDampener * getXVel());
             setX(SpaceShooter.screenWidth - halfWidth);
         }
         
         if (thisY < halfHeight) {
-            setYVel(0.0);
+            setYVel(bounceDampener * getYVel());
             setY(halfHeight);
         } else if (thisY > SpaceShooter.screenHeight - halfHeight) {
-            setYVel(0.0);
+            setYVel(bounceDampener * getYVel());
             setY(SpaceShooter.screenHeight - halfHeight);
         }
         
