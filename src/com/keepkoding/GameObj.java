@@ -35,7 +35,7 @@ abstract class GameObj {
     
     private static final int errorRange = (int)(SpaceShooter.screenWidth / 7.2);
     
-    static boolean drawCollisionDebug = true;
+    static boolean drawCollisionDebug = false;
     
     private Description d;
     
@@ -215,6 +215,9 @@ abstract class GameObj {
     }
     protected final double addSpeed(double delta) {
         this.speed += delta;
+        if (this.speed < 0) {
+            speed = 0;
+        }
         return this.speed;
     }
     protected final void setAngle(double angle) {

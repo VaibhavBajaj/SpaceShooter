@@ -26,10 +26,10 @@ public class SpaceShooter extends JPanel{
     
     private static boolean
             gameOver = false,
-            incXVel = false,
-            decXVel = false,
-            incYVel = false,
-            decYVel = false;
+            incSpeed = false,
+            decSpeed = false,
+            incAngle = false,
+            decAngle = false;
     private static GameBoard gameBoard = new GameBoard();
     
     static PlayerShip playerShip = new PlayerShip();
@@ -52,7 +52,7 @@ public class SpaceShooter extends JPanel{
     private static long nextAsteroidSpawnTick = 0;
     
     private static void updateGame() {
-        playerShip.update(incXVel, decXVel, incYVel, decYVel);
+        playerShip.update(incSpeed, decSpeed, incAngle, decAngle);
         
         
     }
@@ -121,13 +121,13 @@ public class SpaceShooter extends JPanel{
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 // If left or right are pressed, make their booleans true
-                case KeyEvent.VK_LEFT: decXVel = true;
+                case KeyEvent.VK_LEFT: decAngle = true;
                     break;
-                case KeyEvent.VK_RIGHT: incXVel = true;
+                case KeyEvent.VK_RIGHT: incAngle = true;
                     break;
-                case KeyEvent.VK_UP: incYVel = true;
+                case KeyEvent.VK_UP: incSpeed = true;
                     break;
-                case KeyEvent.VK_DOWN: decYVel = true;
+                case KeyEvent.VK_DOWN: decSpeed = true;
                     break;
             }
         }
@@ -136,13 +136,13 @@ public class SpaceShooter extends JPanel{
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
                 // If left or right are released, make their booleans false
-                case KeyEvent.VK_LEFT: decXVel = false;
+                case KeyEvent.VK_LEFT: decAngle = false;
                     break;
-                case KeyEvent.VK_RIGHT: incXVel = false;
+                case KeyEvent.VK_RIGHT: incAngle = false;
                     break;
-                case KeyEvent.VK_UP: incYVel = false;
+                case KeyEvent.VK_UP: incSpeed = false;
                     break;
-                case KeyEvent.VK_DOWN: decYVel = false;
+                case KeyEvent.VK_DOWN: decSpeed = false;
                     break;
             }
         }
