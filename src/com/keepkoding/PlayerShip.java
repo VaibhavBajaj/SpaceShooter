@@ -4,12 +4,12 @@ class PlayerShip extends GameObj {
     
     private static final Description playerDescription =
         new Description("playerShip.png", 0.08)
-        .setMaxVelocity(30.0)
+        .setMaxVelocity(20.0)
         .setCollisionDetection(.5, .58, 0.38);
     
     private static final double
             speedAcc = 1,
-            angularAcc = 0.2,
+            angularAcc = 0.15,
             bounceDampener = -0.7;
 
     PlayerShip() {
