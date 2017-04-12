@@ -18,8 +18,12 @@ public class SpaceShooter extends JPanel{
             screenWidth = 1440,
             screenHeight = 800;
     static int
-            enemyShipCount = 1,
-            asteroidCount = 1;
+            ticksPerEnemySpawn = 120,
+            ticksPerAsteroidSpawn = 60;
+        
+    
+    static long currentTick = 0;
+    
     private static boolean
             gameOver = false,
             incXVel = false,
@@ -32,6 +36,8 @@ public class SpaceShooter extends JPanel{
     
     private static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
+    private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
+    private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();
 
     private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
@@ -39,15 +45,16 @@ public class SpaceShooter extends JPanel{
         addKeyListener(new MyKeyListener());
         setFocusable(true);
     }
-
+    
+    private static boolean temp = false; // XXX
+    
+    private static long nextEnemySpawnTick = 0;
+    private static long nextAsteroidSpawnTick = 0;
+    
     private static void updateGame() {
         playerShip.update(incXVel, decXVel, incYVel, decYVel);
-        for (EnemyShip enemy : enemies) {
-            enemy.update();
-        }
-        for (Asteroid asteroid : asteroids) {
-            asteroid.update();
-        }
+        
+        
     }
 
     @Override
@@ -82,31 +89,24 @@ public class SpaceShooter extends JPanel{
         
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        for (int i = 0; i < enemyShipCount; ++i) {
-            enemies.add(new EnemyShip());
-        }
-        for (int i = 0; i < asteroidCount; ++i) {
-            asteroids.add(new Asteroid());
-        }
 
         long lastTime = System.nanoTime();
-        final double ns = 1000000000.0 / 60.0;
-        double delta = 0;
+        long NsPerFrame = 33333333;         // 30 fps is our target.
+        
         while (!gameOver) {
-            long currentTime = System.nanoTime();
-            delta += (currentTime - lastTime) / ns;
-            lastTime = currentTime;
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-
+            long nextFrameTime = lastTime + NsPerFrame;
+            updateGame();
+            gamePanel.repaint();
+            
+            while (System.nanoTime() < nextFrameTime) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ignored) {
+                    // ignored.
+                }
             }
-            while (delta >= 1) {
-                gamePanel.repaint();
-                updateGame();
-                delta--;
-            }
+            lastTime = nextFrameTime;
+            ++currentTick;
         }
 
     }

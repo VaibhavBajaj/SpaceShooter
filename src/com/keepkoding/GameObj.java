@@ -5,26 +5,25 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-/** Abstract base  class  for  Ships  in  the  game.  The  class  is  mainly
- *  responsible for four things:
+/*  Abstract base class for game objects in the game. The  class  is  mainly
+ *  responsible for five things:
  *  
  *   > Storing the sprite, location, and velocity of the represented ship.
  *   > Painting a rotated sprite on a Graphics2D object to represent the ship.
  *   > Updating the position of a ship each frame given its position & velocity.
- *   > Enforcing the speed limit (maxVel) for the ship and slowing it if needed.
+ *   > Enforcing the speed limit (d.maxVelocity_) and slowing down if needed.
+ *   > Checking collision detection between objects.
  *  
- *  To use this class, extend your own GameObj class using this GameObj class as a
- *  base,  and  construct  the  base  with the initial x and y positions and
- *  velocities, the speed limit for your GameObj (maxVel), and a  BufferedImage
- *  that  will  be  used  as  the sprite for your ship. To change the ship's
- *  position or velocity, just directly modify  the  x,  y,  xVel,  or  yVel
- *  variables  in  this class, and call updateBase() each tick to update the
- *  ship's  position  and  velocity  based  on  its  velocity   and   maxVel
- *  respectively  (this  usually  would  be  done  in your own GameObj's update
- *  method). To paint the ship, call  paint(Graphics2D)  on  the  Graphics2D
- *  object  you  want  the  ship  painted on; you may either leave the paint
- *  method as-is or override it  and  call  super.paint  in  your  overrided
- *  method.
+ *  To use this class, extend your own  GameObj  class  using  this  GameObj
+ *  class  as a base, and construct the base using a Description object that
+ *  specifies (among other things... see Description class  for  more  info)
+ *  the  sprite  and maximum velocity for the object. Call updateBase() each
+ *  tick to update the ship's position and velocity based  on  its  velocity
+ *  and  maxVel  respectively  (this  usually  would  be  done  in  your own
+ *  GameObj's update method). To paint the ship, call  paint(Graphics2D)  on
+ *  the Graphics2D object you want the ship painted on; you may either leave
+ *  the paint method as-is or override  it  and  call  super.paint  in  your
+ *  overrided method.
  */
 abstract class GameObj {
     // The transformation used to draw the sprite.
@@ -79,7 +78,7 @@ abstract class GameObj {
         );
     }
     
-    /** Initialized the GameObj with its basic  information  specified  in  the
+    /** Initialized the GameObj with its basic information specified in  the
      *  Description object, and set the initial coordinate and velocity.
      */
     GameObj(Description d, double x, double y, double xVel, double yVel) {
@@ -121,18 +120,6 @@ abstract class GameObj {
         }
     }
     
-    /** Return the width of the sprite used to render this object.
-     */
-    protected final int getWidth() {
-        return d.scaledSprite_.getWidth();
-    }
-    
-    /** Return the height of the sprite used to render this object.
-     */
-    protected final int getHeight() {
-        return d.scaledSprite_.getHeight();
-    }
-    
     /** Transform and draw the sprite on the specified Graphics2D object.
      */
     void paint(Graphics2D g) {
@@ -170,8 +157,9 @@ abstract class GameObj {
         }
     }
     
-    /** Return whether this GameObj and that GameObj  have  overlapping  collision
-     *  circles (as defined by their respective Description objects).
+    /** Return whether  this  GameObj  and  that  GameObj  have  overlapping
+     *  collision  circles  (as  defined  by  their  respective  Description
+     *  objects).
      */
     final boolean checkCollision(GameObj that) {
         // First, transform the two ships' collision circle centers from
@@ -185,6 +173,18 @@ abstract class GameObj {
         double circleDistance = this.tmpPoint.distance(that.tmpPoint);
         double totalRadius = this.d.collisionRadius_ + that.d.collisionRadius_;
         return circleDistance < totalRadius;
+    }
+    
+    /** Return the width of the sprite used to render this object.
+     */
+    final int getWidth() {
+        return d.getSpriteWidth();
+    }
+    
+    /** Return the height of the sprite used to render this object.
+     */
+    final int getHeight() {
+        return d.getSpriteHeight();
     }
     
     final double getX() { return x; }
@@ -213,8 +213,17 @@ abstract class GameObj {
     protected final void setSpeed(double speed) {
         this.speed = speed;
     }
+    protected final double addSpeed(double delta) {
+        this.speed += delta;
+        return this.speed;
+    }
     protected final void setAngle(double angle) {
         this.angle = angle;
+    }
+    protected final double addAngle(double delta) {
+        this.angle += delta;
+        this.angle %= 6.283185307179586;
+        return this.angle;
     }
     protected final void setXVel(double xVel) {
         setVelocity(xVel, getYVel());

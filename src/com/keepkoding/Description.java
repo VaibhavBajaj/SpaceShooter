@@ -38,31 +38,10 @@ final class Description {
     double maxVelocity_ = 5.0;
     
     // All values here are in pixels.
-    double collisionRadius_ = -1;
+    // Collision detection disabled by default by setting radius to -inf.
+    double collisionRadius_ = -1./0.;
     double anchorX_, anchorY_;
     Point2D.Double collisionCenter_ = new Point2D.Double(0, 0);
-    
-    // I'm trying to do some testing of AffineTransformOp's hint argument
-    // to see if I can get nice scaling without the performance loss
-    // that Image.getScaledInstance somehow entails.
-    private static final RenderingHints hints;
-    
-    static {
-        hints = new RenderingHints(
-                  RenderingHints.KEY_ANTIALIASING, 
-                  RenderingHints.VALUE_ANTIALIAS_ON
-                );
-        hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
-                  RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        hints.put(RenderingHints.KEY_COLOR_RENDERING,     
-                  RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        hints.put(RenderingHints.KEY_INTERPOLATION,
-                  RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        hints.put(RenderingHints.KEY_RENDERING,
-                  RenderingHints.VALUE_RENDER_QUALITY);
-        hints.put(RenderingHints.KEY_STROKE_CONTROL,
-                  RenderingHints.VALUE_STROKE_NORMALIZE);
-    }
     
     /** Create a new description  object  using  a  scaled  version  of  the
      *  argument sprite. The sprite used to render the GameObj parameterized by
@@ -171,6 +150,20 @@ final class Description {
         collisionCenter_.y = 0.5 * h;
         collisionRadius_ = radius * 0.5 * Math.hypot(w, h);
         return this;
+    }
+
+    /** Return the width in pixels of the  sprite  used  to  render  GameObj
+     *  instances initialized with this description.
+     */
+    int getSpriteWidth() {
+        return scaledSprite_.getWidth();
+    }
+    
+    /** Return the height in pixels of the sprite  used  to  render  GameObj
+     *  instances initialized with this description.
+     */
+    int getSpriteHeight() {
+        return scaledSprite_.getHeight();
     }
 }
 
