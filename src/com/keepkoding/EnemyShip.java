@@ -1,7 +1,5 @@
 package com.keepkoding;
 
-import java.awt.image.BufferedImage;
-
 class EnemyShip extends GameObj {
 
     private static final int
@@ -11,9 +9,6 @@ class EnemyShip extends GameObj {
             new Description("enemyShip.png", 0.08)
                     .setMaxVelocity(maxVel)
                     .setCollisionDetection(.5, .47, 0.58);
-
-    private static final BufferedImage sprite =
-        ImageLoader.load("enemyShip.png");
 
     EnemyShip() {
         super(enemyDescription);
