@@ -54,9 +54,87 @@ public class SpaceShooter extends JPanel{
     private static void updateGame() {
         playerShip.update(incXVel, decXVel, incYVel, decYVel);
         
+        int asteroidCount = asteroids.size();
+        int enemyCount = enemies.size();
         
+        for (int i = 0; i < asteroidCount; ++i) {
+            // Use the temporary ArrayList to purge all asteroids that are
+            // off screen and will not return. Swap the temporary ArrayList
+            // with the main asteroids ArrayList, and use the object that was
+            // formerly the main ArrayList as the temporary for the next tick.
+            Asteroid a = asteroids.get(i);
+            tmpAsteroids.clear();
+            
+            // Check collisions with the player, update & keep asteroids
+            // that are still on-screen or heading to the screen.
+            if (!a.exitingScreen()) {
+                if (a.checkCollision(playerShip)) {
+                    createExplosion(playerShip.getX(), playerShip.getY());
+                    gameOver();
+                }
+                a.update();
+                tmpAsteroids.add(a);
+            }
+            ArrayList<Asteroid> swapTmp = asteroids;
+            asteroids = tmpAsteroids;
+            tmpAsteroids = swapTmp;
+            
+            // Add another asteroid if now is the time to do it.
+            if (nextAsteroidSpawnTick == currentTick) {
+                asteroids.add(new Asteroid());
+                nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
+            }
+            
+            System.err.println("Asteroid count: " + asteroids.size());
+        }
+        
+        for (int i = 0; i < enemyCount; ++i) {
+            EnemyShip e = enemies.get(i);
+            tmpEnemies.clear();
+            
+            // If an enemy is colliding with an asteroid, remove it from
+            // the array list by not adding it to the temporary enemies,
+            // and create an explosion at the position it was in. Otherwise,
+            // update the enemy.
+            if (checkEnemyAsteroidCollision(e)) {
+                createExplosion(e.getX(), e.getY());
+            } else {
+                e.update();
+                tmpEnemies.add(e);
+            }
+            
+            ArrayList<EnemyShip> swapTmp = enemies;
+            enemies = tmpEnemies;
+            tmpEnemies = swapTmp;
+            
+            // Add another enemy if now is the time to do it.
+            if (nextEnemySpawnTick == currentTick) {
+                enemies.add(new EnemyShip());
+                nextEnemySpawnTick += ticksPerEnemySpawn;
+            }
+        }
     }
-
+    
+    private static boolean checkEnemyAsteroidCollision(EnemyShip enemyArg) {
+        int asteroidCount = asteroids.size();
+        for (int i = 0; i < asteroidCount; ++i) {
+            Asteroid a = asteroids.get(i);
+            if (a.checkCollision(enemyArg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private static void createExplosion(double x, double y) {
+        // Placeholder for now FIXME.
+    }
+    
+    private static void gameOver() {
+        System.out.println("GAME OVER!!!!!!11111!!1!!1one!!!");
+        // Placeholder for now FIXME.
+    }
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -148,3 +226,4 @@ public class SpaceShooter extends JPanel{
         }
     }
 }
+
