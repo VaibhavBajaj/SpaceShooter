@@ -65,7 +65,6 @@ public class SpaceShooter extends JPanel{
             // formerly the main ArrayList as the temporary for the next tick.
             Asteroid a = asteroids.get(i);
             
-            
             // Check collisions with the player, update & keep asteroids
             // that are still on-screen or heading to the screen.
             if (!a.exitingScreen()) {
@@ -88,9 +87,15 @@ public class SpaceShooter extends JPanel{
             // If an enemy is colliding with an asteroid, remove it from
             // the array list by not adding it to the temporary enemies,
             // and create an explosion at the position it was in. Otherwise,
-            // update the enemy.
+            // check if it collides with the player. If so, game over.
+            // If it is not colliding with either of these things, then
+            // update the enemy and add it to the temporary enemy list so
+            // it can live to fight another day.
             if (checkEnemyAsteroidCollision(e)) {
                 createExplosion(e.getX(), e.getY());
+            } else if (e.checkCollision(playerShip)) {
+                createExplosion(playerShip.getX(), playerShip.getY());
+                gameOver();
             } else {
                 e.update();
                 tmpEnemies.add(e);
@@ -118,6 +123,7 @@ public class SpaceShooter extends JPanel{
         for (int i = 0; i < asteroidCount; ++i) {
             Asteroid a = asteroids.get(i);
             if (a.checkCollision(enemyArg)) {
+                asteroids.remove(i);
                 return true;
             }
         }
