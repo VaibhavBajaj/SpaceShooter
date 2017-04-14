@@ -1,17 +1,17 @@
 package com.keepkoding;
 
 import java.applet.AudioClip;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import sun.jvm.hotspot.memory.Space;
 
 public class SpaceShooter extends JPanel{
     static final int
@@ -19,7 +19,8 @@ public class SpaceShooter extends JPanel{
             screenHeight = 800;
     static int
             ticksPerEnemySpawn = 120,
-            ticksPerAsteroidSpawn = 60;
+            ticksPerAsteroidSpawn = 60,
+            hitpoints = 3;
         
     
     static long currentTick = 0;
@@ -70,7 +71,11 @@ public class SpaceShooter extends JPanel{
             if (!a.exitingScreen()) {
                 if (a.checkCollision(playerShip)) {
                     createExplosion(playerShip.getX(), playerShip.getY());
-                    gameOver();
+                    hitpoints--;
+                    if(hitpoints == 0) {
+                        gameOver = true;
+                        return;
+                    }
                 }
                 a.update();
                 tmpAsteroids.add(a);
@@ -95,7 +100,11 @@ public class SpaceShooter extends JPanel{
                 createExplosion(e.getX(), e.getY());
             } else if (e.checkCollision(playerShip)) {
                 createExplosion(playerShip.getX(), playerShip.getY());
-                gameOver();
+                hitpoints--;
+                if(hitpoints == 0) {
+                    gameOver = true;
+                    return;
+                }
             } else {
                 e.update();
                 tmpEnemies.add(e);
@@ -133,24 +142,27 @@ public class SpaceShooter extends JPanel{
     private static void createExplosion(double x, double y) {
         // Placeholder for now FIXME.
     }
-    
-    private static void gameOver() {
-        System.out.println("GAME OVER!!!!!!11111!!1!!1one!!!");
-        // Placeholder for now FIXME.
-    }
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        Graphics2D g2d = (Graphics2D)g;
-        gameBoard.paint(g2d);
-        playerShip.paint(g2d);
-        
-        for (EnemyShip enemy : enemies) {
-            enemy.paint(g2d);
+        Graphics2D g2d = (Graphics2D) g;
+        if(!gameOver) {
+            gameBoard.paint(g2d);
+            playerShip.paint(g2d);
+
+            for (EnemyShip enemy : enemies) {
+                enemy.paint(g2d);
+            }
+            for (Asteroid asteroid : asteroids) {
+                asteroid.paint(g2d);
+            }
         }
-        for (Asteroid asteroid : asteroids) {
-            asteroid.paint(g2d);
+        else {
+            gameBoard.paint(g2d);
+            g.setColor(Color.cyan);
+            g.setFont(new Font("TimesRoman", Font.BOLD, 72));
+            g.drawString("Game Over.", screenWidth / 4, screenHeight / 6);
         }
     }
 
@@ -177,9 +189,7 @@ public class SpaceShooter extends JPanel{
         
         while (!gameOver) {
             long nextFrameTime = lastTime + NsPerFrame;
-            updateGame();
-            gamePanel.repaint();
-            
+
             while (System.nanoTime() < nextFrameTime) {
                 try {
                     Thread.sleep(1);
@@ -187,10 +197,12 @@ public class SpaceShooter extends JPanel{
                     // ignored.
                 }
             }
+            updateGame();
+            gamePanel.repaint();
+
             lastTime = nextFrameTime;
             ++currentTick;
         }
-
     }
 
     // My key listener class

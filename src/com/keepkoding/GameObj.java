@@ -52,7 +52,7 @@ abstract class GameObj {
      */
     GameObj(Description d) {
         this.d = d;
-        switch (randCoord(0,3)) {
+        switch (randCoord(0,4)) {
             case 0:
                 this.x = randCoord(-1 * errorRange, 0);
                 this.y = randCoord(-1 * errorRange, SpaceShooter.screenHeight + errorRange);
