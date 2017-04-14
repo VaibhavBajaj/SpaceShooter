@@ -147,22 +147,16 @@ public class SpaceShooter extends JPanel{
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        if(!gameOver) {
-            gameBoard.paint(g2d);
-            playerShip.paint(g2d);
-
-            for (EnemyShip enemy : enemies) {
-                enemy.paint(g2d);
-            }
-            for (Asteroid asteroid : asteroids) {
-                asteroid.paint(g2d);
-            }
+        gameBoard.paintField(g2d);
+        playerShip.paint(g2d);
+        for (EnemyShip enemy : enemies) {
+            enemy.paint(g2d);
         }
-        else {
-            gameBoard.paint(g2d);
-            g.setColor(Color.cyan);
-            g.setFont(new Font("TimesRoman", Font.BOLD, 72));
-            g.drawString("Game Over.", screenWidth / 4, screenHeight / 6);
+        for (Asteroid asteroid : asteroids) {
+            asteroid.paint(g2d);
+        }
+        if(gameOver) {
+            gameBoard.paintGameOver(g2d);
         }
     }
 
@@ -187,7 +181,7 @@ public class SpaceShooter extends JPanel{
         long lastTime = System.nanoTime();
         long NsPerFrame = 33333333;         // 30 fps is our target.
         
-        while (!gameOver) {
+        while (true) {
             long nextFrameTime = lastTime + NsPerFrame;
 
             while (System.nanoTime() < nextFrameTime) {
@@ -197,7 +191,9 @@ public class SpaceShooter extends JPanel{
                     // ignored.
                 }
             }
-            updateGame();
+            if(!gameOver) {
+                updateGame();
+            }
             gamePanel.repaint();
 
             lastTime = nextFrameTime;
