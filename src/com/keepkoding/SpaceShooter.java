@@ -16,11 +16,12 @@ import sun.jvm.hotspot.memory.Space;
 public class SpaceShooter extends JPanel{
     static final int
             screenWidth = 1440,
-            screenHeight = 800;
+            screenHeight = 800,
+            totHitpoints = 10;
     static int
             ticksPerEnemySpawn = 120,
             ticksPerAsteroidSpawn = 60,
-            hitpoints = 3;
+            hitpoints = totHitpoints;
         
     
     static long currentTick = 0;
@@ -40,7 +41,7 @@ public class SpaceShooter extends JPanel{
     private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();
 
-    private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
+    private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
 
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
@@ -145,16 +146,46 @@ public class SpaceShooter extends JPanel{
 
     @Override
     public void paint(Graphics g) {
+        // Clears screen
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
+        // Paint the background
         gameBoard.paintField(g2d);
+        // Paint the hitpoints
+        g2d.setColor(Color.DARK_GRAY);
+        g2d.fill3DRect(
+                SpaceShooter.screenWidth / 50,
+                SpaceShooter.screenHeight / 50,
+                SpaceShooter.screenWidth / 6,
+                SpaceShooter.screenHeight / 24,
+                true
+        );
+        if(hitpoints < totHitpoints * 0.33) {
+            g2d.setColor(Color.RED);
+        }
+        else if(hitpoints < totHitpoints * 0.66) {
+            g2d.setColor(Color.YELLOW);
+        }
+        else {
+            g2d.setColor(Color.GREEN);
+        }
+        g2d.fillRect(
+                (SpaceShooter.screenWidth / 50) + 5,
+                (SpaceShooter.screenHeight / 50) + 5,
+                (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / totHitpoints)) - 10),
+                (SpaceShooter.screenHeight / 24) - 10
+        );
+        // Paint the player
         playerShip.paint(g2d);
+        // Paint enemies one by one
         for (EnemyShip enemy : enemies) {
             enemy.paint(g2d);
         }
+        // Paint asteroids one by one
         for (Asteroid asteroid : asteroids) {
             asteroid.paint(g2d);
         }
+        // If game has ended, paint the gameOver sign
         if(gameOver) {
             gameBoard.paintGameOver(g2d);
         }
