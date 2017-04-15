@@ -23,8 +23,9 @@ public class SpaceShooter extends JPanel{
             screenHeight = 800,
             totHitpoints = 10,
             ticksPerEnemySpawn = 120,
-            ticksPerAsteroidSpawn = 60,
-            hitpoints = totHitpoints;
+            ticksPerAsteroidSpawn = 60;
+    
+    static int hitpoints = totHitpoints;
     
     static long currentTick = 0;
     
