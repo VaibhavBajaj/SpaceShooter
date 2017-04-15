@@ -41,7 +41,7 @@ public class SpaceShooter extends JPanel{
     private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();
 
-    private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
+    private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
@@ -151,6 +151,16 @@ public class SpaceShooter extends JPanel{
         Graphics2D g2d = (Graphics2D) g;
         // Paint the background
         gameBoard.paintField(g2d);
+        // Paint the player
+        playerShip.paint(g2d);
+        // Paint enemies one by one
+        for (EnemyShip enemy : enemies) {
+            enemy.paint(g2d);
+        }
+        // Paint asteroids one by one
+        for (Asteroid asteroid : asteroids) {
+            asteroid.paint(g2d);
+        }
         // Paint the hitpoints
         g2d.setColor(Color.DARK_GRAY);
         g2d.fill3DRect(
@@ -175,16 +185,6 @@ public class SpaceShooter extends JPanel{
                 (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / totHitpoints)) - 10),
                 (SpaceShooter.screenHeight / 24) - 10
         );
-        // Paint the player
-        playerShip.paint(g2d);
-        // Paint enemies one by one
-        for (EnemyShip enemy : enemies) {
-            enemy.paint(g2d);
-        }
-        // Paint asteroids one by one
-        for (Asteroid asteroid : asteroids) {
-            asteroid.paint(g2d);
-        }
         // If game has ended, paint the gameOver sign
         if(gameOver) {
             gameBoard.paintGameOver(g2d);
