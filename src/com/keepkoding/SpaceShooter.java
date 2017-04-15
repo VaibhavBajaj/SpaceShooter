@@ -58,7 +58,7 @@ public class SpaceShooter extends JPanel{
     
     private static void updateGame() {
         playerShip.update(incSpeed, decSpeed, incAngle, decAngle);
-        
+
         int asteroidCount = asteroids.size();
         int enemyCount = enemies.size();
         
@@ -154,8 +154,10 @@ public class SpaceShooter extends JPanel{
         Graphics2D g2d = (Graphics2D) g;
         // Paint the background
         gameBoard.paintField(g2d);
-        // Paint the player
-        playerShip.paint(g2d);
+        if(!gameOver) {
+            // Paint the player
+            playerShip.paint(g2d);
+        }
         // Paint enemies one by one
         for (EnemyShip enemy : enemies) {
             enemy.paint(g2d);
@@ -164,6 +166,8 @@ public class SpaceShooter extends JPanel{
         for (Asteroid asteroid : asteroids) {
             asteroid.paint(g2d);
         }
+        // Paint the explosions.
+        explosions.paint(g2d);
         // Paint the hitpoints
         g2d.setColor(Color.DARK_GRAY);
         g2d.fill3DRect(
@@ -188,19 +192,6 @@ public class SpaceShooter extends JPanel{
                 (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / totHitpoints)) - 10),
                 (SpaceShooter.screenHeight / 24) - 10
         );
-        
-        // Paint the player
-        playerShip.paint(g2d);
-        // Paint enemies one by one
-        for (EnemyShip enemy : enemies) {
-            enemy.paint(g2d);
-        }
-        // Paint asteroids one by one
-        for (Asteroid asteroid : asteroids) {
-            asteroid.paint(g2d);
-        }
-        // Paint the explosions.
-        explosions.paint(g2d);
         
         // If game has ended, paint the gameOver sign
         if(gameOver) {
