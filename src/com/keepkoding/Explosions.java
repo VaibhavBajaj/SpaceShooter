@@ -21,22 +21,15 @@ class Explosions {
         }
     }
     
-    static final int spriteCount = 20;
+    static final int spriteCount = 90;
     
     private static BufferedImage[] sprites = new BufferedImage[spriteCount];
+    private static final String filenameFormat = "explosionFrames/explosion1_%04d.png";
     
     static {
         for (int i = 0; i < spriteCount; ++i) {
-            // sprites[i] = ImageLoader.load("explosion" + i + ".png");
-            
-            // Placeholder XXX until we get real explosion sprites.
-            BufferedImage sprite = new BufferedImage(160 - i*8, 160 -i*8, BufferedImage.TYPE_INT_ARGB);
-            Graphics g = sprite.getGraphics();
-            Color c = new Color(1.0f, 1.0f - i*0.04f, 0.1f, 0.9f - i*0.04f);
-            g.setColor(c);
-            g.fillOval(0, 0, 160 - 8*i, 160 - 8*i);
-            
-            sprites[i] = sprite;
+            String name = String.format(filenameFormat , i + 1);
+            sprites[i] = ImageLoader.load(name);
         }
     }
     
