@@ -1,7 +1,7 @@
 package com.keepkoding;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -29,18 +29,18 @@ class Explosions {
         }
     }
     
-    static final int spriteCount = 90;
+    static final int frameCount = 90;
     
     // This is the sequence of sprites that are used to animate an explosion.
     // The length of the array is the number of ticks that an explosion
     // will remain on-screen.
-    private static BufferedImage[] sprites = new BufferedImage[spriteCount];
+    private static BufferedImage[] frames = new BufferedImage[frameCount];
     private static final String filenameFormat = "explosionFrames/explosion1_%04d.png";
     
     static {
-        for (int i = 0; i < spriteCount; ++i) {
+        for (int i = 0; i < frameCount; ++i) {
             String name = String.format(filenameFormat , i + 1);
-            sprites[i] = ImageLoader.load(name);
+            frames[i] = ImageLoader.load(name);
         }
     }
     
@@ -80,15 +80,15 @@ class Explosions {
             // Draw the explosion with the correct sprite and add it to the
             // list of explosions to keep only if there were still enough
             // sprites in the sprite sequence to draw the explosion with.
-            if (explosionAge < spriteCount) {
+            if (explosionAge < frameCount) {
                 tmpList.add(data);
-                BufferedImage sprite = sprites[explosionAge];
-                int xMidpt = sprite.getWidth() / 2;
-                int yMidpt = sprite.getHeight() / 2;
-                
+                BufferedImage frame = frames[explosionAge];
+                int xMidpt = frame.getWidth() / 2;
+                int yMidpt = frame.getHeight() / 2;
+
                 transform.setToTranslation(data.x - xMidpt, data.y - yMidpt);
                 
-                g.drawRenderedImage(sprite, transform);
+                g.drawRenderedImage(frame, transform);
             }
         }
         // Swap out the temporary list containing the explosions that we still
