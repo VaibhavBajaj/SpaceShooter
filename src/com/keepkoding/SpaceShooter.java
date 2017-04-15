@@ -1,17 +1,21 @@
 package com.keepkoding;
 
 import java.applet.AudioClip;
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
-import sun.jvm.hotspot.memory.Space;
 
 public class SpaceShooter extends JPanel{
     static final int
@@ -40,15 +44,14 @@ public class SpaceShooter extends JPanel{
     
     private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();
-
+    private static Explosions explosions = new Explosions();
+    
     private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
 
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
         setFocusable(true);
     }
-    
-    private static boolean temp = false; // XXX
     
     private static long nextEnemySpawnTick = 0;
     private static long nextAsteroidSpawnTick = 0;
@@ -93,7 +96,7 @@ public class SpaceShooter extends JPanel{
             // If an enemy is colliding with an asteroid, remove it from
             // the array list by not adding it to the temporary enemies,
             // and create an explosion at the position it was in. Otherwise,
-            // check if it collides with the player. If so, game over.
+            // check if it collides with the player. If so, reduce hitpoints.
             // If it is not colliding with either of these things, then
             // update the enemy and add it to the temporary enemy list so
             // it can live to fight another day.
@@ -141,7 +144,7 @@ public class SpaceShooter extends JPanel{
     }
     
     private static void createExplosion(double x, double y) {
-        // Placeholder for now FIXME.
+        explosions.addExplosion((int)x, (int)y);
     }
 
     @Override
@@ -185,6 +188,9 @@ public class SpaceShooter extends JPanel{
         for (Asteroid asteroid : asteroids) {
             asteroid.paint(g2d);
         }
+        // Paint the explosions.
+        explosions.paint(g2d);
+        
         // If game has ended, paint the gameOver sign
         if(gameOver) {
             gameBoard.paintGameOver(g2d);
@@ -192,10 +198,6 @@ public class SpaceShooter extends JPanel{
     }
 
     public static void main(String[] args) {
-        // Some java implementations don't seem to use hardware acceleration
-        // by default. Force them to behave!
-        System.setProperty("sun.java2d.opengl", "True");
-        
         JFrame frame = new JFrame("Space Shooter");
         
         SpaceShooter gamePanel = new SpaceShooter();

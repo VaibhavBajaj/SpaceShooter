@@ -1,13 +1,12 @@
 
 package com.keepkoding;
 
-import java.awt.RenderingHints;
 import java.awt.Image;
 import java.awt.Graphics;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Class for describing the essential characteristics of a game object: its
  *  sprite,   maximum  velocity,  collision  detection  circle,  and  anchor
@@ -43,6 +42,21 @@ final class Description {
     double anchorX_, anchorY_;
     Point2D.Double collisionCenter_ = new Point2D.Double(0, 0);
     
+    private class MyImageObserver implements ImageObserver {
+        private AtomicBoolean finished = new AtomicBoolean(false);
+        
+        public boolean imageUpdate(Image i, int a, int x, int y, int w, int h) {
+            finished.set(true);
+            return true;
+        }
+        
+        public void waitUntilFinished() {
+            while (!finished.get()) {
+                
+            }
+        }
+    }
+    
     /** Create a new description  object  using  a  scaled  version  of  the
      *  argument sprite. The sprite used to render the GameObj parameterized by
      *  this Description object will have a diagonal  that  is  diagonalSize
@@ -75,10 +89,9 @@ final class Description {
         
         Graphics g = scaledSprite_.getGraphics();
         try {
-            boolean success = g.drawImage(toolkitImage, 0, 0, null);
-            if (!success) {
-                throw new RuntimeException("Failed to scale image.");
-            }
+            MyImageObserver observer = new MyImageObserver();
+            g.drawImage(toolkitImage, 0, 0, observer);
+            observer.waitUntilFinished();
         } finally {
             g.dispose();
         }
