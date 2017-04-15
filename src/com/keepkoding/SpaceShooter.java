@@ -21,12 +21,10 @@ public class SpaceShooter extends JPanel{
     static final int
             screenWidth = 1440,
             screenHeight = 800,
-            totHitpoints = 10;
-    static int
+            totHitpoints = 10,
             ticksPerEnemySpawn = 120,
             ticksPerAsteroidSpawn = 60,
             hitpoints = totHitpoints;
-        
     
     static long currentTick = 0;
     
@@ -36,6 +34,7 @@ public class SpaceShooter extends JPanel{
             decSpeed = false,
             incAngle = false,
             decAngle = false;
+    
     private static GameBoard gameBoard = new GameBoard();
     
     static PlayerShip playerShip = new PlayerShip();

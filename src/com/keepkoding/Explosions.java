@@ -8,14 +8,14 @@ import java.util.ArrayList;
 /** Class that manages a list of explosions that should be drawn on  screen.
  *  For  each  explosion, the class remembers the x and y coordinates of the
  *  explosion (in pixels), and the game tick  in  which  the  explosion  was
- *  created. The class is initialized with a sequence of sprites to use when
- *  drawing the explosion. In each tick,  the  explosion  'decays'  by  one,
- *  drawing  the  sprite  that is next in the sequence after the sprite that
- *  was drawn in the previous tick. In other words, on the 24th tick  sprite
- *  number  24  will  be  drawn,  on  the 25th tick sprite number 25 will be
- *  drawn, etc. When the class runs out of  sprites  to  draw  an  explosion
- *  with,  the  memory  used to store the explosion will be released and the
- *  explosion will no longer be drawn on-screen.
+ *  created.  The  class is initialized with a sequence of BufferedImages as
+ *  frames to use when drawing the explosion. In each  tick,  the  explosion
+ *  'decays'  by  one,  drawing the frame that is next in the sequence after
+ *  the frame that was drawn in the previous tick. In other  words,  on  the
+ *  24th  tick  frame number 24 will be drawn, on the 25th tick frame number
+ *  25 will be drawn, etc. When the class runs out  of  frames  to  draw  an
+ *  explosion  with, the memory used to store the explosion will be released
+ *  and the explosion will no longer be drawn on-screen.
  */
 class Explosions {
     private static final class ExplosionData {

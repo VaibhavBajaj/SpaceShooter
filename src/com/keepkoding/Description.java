@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *  in their respective setters. Create an instance of this class by calling
  *  the constructor using the sprite and diagonal size that you  want,  then
  *  "chain"  setters to that constructor call to add behavior that you want,
- *  then pass the created object to the GameObj class  constructor  to  control
- *  the GameObj's behavior. Please treat the instance variables as if they were
- *  private, and do not call any setters once the object is  passed  to  the
- *  GameObj constructor.
+ *  then pass the created object to the GameObj class constructor to control
+ *  the  GameObj's  behavior. Please treat the instance variables as if they
+ *  were private, and do not call any setters once the object is  passed  to
+ *  the GameObj constructor.
  *  
  *  Example syntax:
  *      new Description("foo.png", 1337.)
@@ -58,8 +58,8 @@ final class Description {
     }
     
     /** Create a new description  object  using  a  scaled  version  of  the
-     *  argument sprite. The sprite used to render the GameObj parameterized by
-     *  this Description object will have a diagonal  that  is  diagonalSize
+     *  argument sprite. The sprite used to render the GameObj parameterized
+     *  by this Description object will have a diagonal that is diagonalSize
      *  times  the diagonal of the screen. For example, if the screen is 500
      *  by 1200 pixels (1300 pixel diagonal), rawSprite has a size of 660 by
      *  880  pixels,  and diagonalSize is 5./13., then the sprite inside the
