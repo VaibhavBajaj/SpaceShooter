@@ -50,10 +50,10 @@ class Explosions {
         explosionList = new ArrayList<ExplosionData>(),
         tmpList = new ArrayList<ExplosionData>();
     
-    /** Add an explosion with the  coordinates  specified  to  the  list  of
-     *  explosions  to be drawn. The class automatically keeps track of when
-     *  the explosion was added based on the  SpaceShooter  class's  current
-     *  tick.
+    /** Add an explosion centered at the coordinates specified to  the  list
+     *  of  explosions  to  be drawn. The class automatically keeps track of
+     *  when the explosion was  added  based  on  the  SpaceShooter  class's
+     *  current tick.
      */
     void addExplosion(int x, int y) {
         explosionList.add(new ExplosionData(x, y));

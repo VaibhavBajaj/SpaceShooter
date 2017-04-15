@@ -85,8 +85,7 @@ abstract class GameObj {
         this.d = d;
         this.x = x;
         this.y = y;
-        this.setXVel(xVel);
-        this.setYVel(yVel);
+        this.setVelocity(xVel, yVel);
         
         this.transform = AffineTransform.getTranslateInstance(
             x - d.anchorX_, y - d.anchorY_

@@ -103,7 +103,10 @@ public class SpaceShooter extends JPanel{
             if (checkEnemyAsteroidCollision(e)) {
                 createExplosion(e.getX(), e.getY());
             } else if (e.checkCollision(playerShip)) {
-                createExplosion(playerShip.getX(), playerShip.getY());
+                createExplosion(
+                    (playerShip.getX() + e.getX()) * 0.5,
+                    (playerShip.getY() + e.getY()) * 0.5
+                );
                 hitpoints--;
                 if(hitpoints == 0) {
                     gameOver = true;
