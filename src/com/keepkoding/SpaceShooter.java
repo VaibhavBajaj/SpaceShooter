@@ -45,8 +45,8 @@ public class SpaceShooter extends JPanel{
     private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
     private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();   
     private static Explosions explosions = new Explosions();
-    
-    private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
+
+    private static AudioClip bgSound = MusicLoader.loadClip("bgSound.wav");
 
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
@@ -76,7 +76,7 @@ public class SpaceShooter extends JPanel{
                 if (a.checkCollision(playerShip)) {
                     createExplosion(playerShip.getX(), playerShip.getY());
                     hitpoints--;
-                    if(hitpoints == 0) {
+                    if(hitpoints <= 0) {
                         gameOver = true;
                         return;
                     }
@@ -108,9 +108,8 @@ public class SpaceShooter extends JPanel{
                     (playerShip.getY() + e.getY()) * 0.5
                 );
                 hitpoints--;
-                if(hitpoints == 0) {
+                if(hitpoints <= 0) {
                     gameOver = true;
-                    return;
                 }
             } else {
                 e.update();
@@ -218,7 +217,7 @@ public class SpaceShooter extends JPanel{
 
         long lastTime = System.nanoTime();
         long NsPerFrame = 33333333;         // 30 fps is our target.
-        
+
         while (true) {
             long nextFrameTime = lastTime + NsPerFrame;
 
