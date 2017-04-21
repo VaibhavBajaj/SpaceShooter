@@ -21,40 +21,56 @@ public class SpaceShooter extends JPanel{
     static final int
             screenWidth = 1440,
             screenHeight = 800,
-            totHitpoints = 10,
-            ticksPerEnemySpawn = 120,
-            ticksPerAsteroidSpawn = 60;
+            maxHitpoints = 10;
     
-    static int hitpoints = totHitpoints;
+    private static final GameBoard gameBoard = new GameBoard();
     
-    static long currentTick = 0;
-    
-    private static boolean
-            gameOver = false,
-            incSpeed = false,
-            decSpeed = false,
-            incAngle = false,
-            decAngle = false;
-    
-    private static GameBoard gameBoard = new GameBoard();
-    
-    static PlayerShip playerShip = new PlayerShip();
-    static ArrayList<EnemyShip> enemies = new ArrayList<EnemyShip>();
-    static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
-    
-    private static ArrayList<EnemyShip> tmpEnemies = new ArrayList<EnemyShip>();
-    private static ArrayList<Asteroid> tmpAsteroids = new ArrayList<Asteroid>();   
-    private static Explosions explosions = new Explosions();
+    private static boolean gameOver, incSpeed, decSpeed, incAngle, decAngle;
     
     private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
-
+    
+    static PlayerShip playerShip;
+    static ArrayList<EnemyShip> enemies, tmpEnemies;
+    static ArrayList<Asteroid> asteroids, tmpAsteroids;
+    
+    private static Explosions explosions;
+    
+    static long currentTick;
+    private static int hitpoints;
+    private static long nextEnemySpawnTick, nextAsteroidSpawnTick;
+    private static long ticksPerAsteroidSpawn, ticksPerEnemySpawn;
+    
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
         setFocusable(true);
     }
     
-    private static long nextEnemySpawnTick = 0;
-    private static long nextAsteroidSpawnTick = 0;
+    private static void resetGame(int difficulty) {
+        hitpoints = maxHitpoints;
+        
+        gameOver = false;
+        incSpeed = false;
+        decSpeed = false;
+        incAngle = false;
+        decAngle = false;
+        
+        playerShip = new PlayerShip();
+        
+        enemies = new ArrayList<EnemyShip>();
+        tmpEnemies = new ArrayList<EnemyShip>();
+        
+        asteroids = new ArrayList<Asteroid>();
+        tmpAsteroids = new ArrayList<Asteroid>();
+        
+        explosions = new Explosions();
+        
+        currentTick = 0;
+        hitpoints = maxHitpoints;
+        nextEnemySpawnTick = 0;
+        nextAsteroidSpawnTick = 0;
+        ticksPerEnemySpawn = 120;
+        ticksPerAsteroidSpawn = 60;
+    }
     
     private static void updateGame() {
         playerShip.update(incSpeed, decSpeed, incAngle, decAngle);
@@ -71,18 +87,19 @@ public class SpaceShooter extends JPanel{
             Asteroid a = asteroids.get(i);
             
             // Check collisions with the player, update & keep asteroids
-            // that are still on-screen or heading to the screen.
+            // that are still on-screen or heading to the screen, and
+            // didn't crash into the player.
             if (!a.exitingScreen()) {
                 if (a.checkCollision(playerShip)) {
                     createExplosion(playerShip.getX(), playerShip.getY());
                     hitpoints--;
-                    if(hitpoints == 0) {
+                    if (hitpoints == 0) {
                         gameOver = true;
-                        return;
                     }
+                } else {
+                    a.update();
+                    tmpAsteroids.add(a);
                 }
-                a.update();
-                tmpAsteroids.add(a);
             }
         }
         ArrayList<Asteroid> swapTmpAsteroids = asteroids;
@@ -180,10 +197,10 @@ public class SpaceShooter extends JPanel{
                 SpaceShooter.screenHeight / 24,
                 true
         );
-        if(hitpoints < totHitpoints * 0.33) {
+        if(hitpoints < maxHitpoints * 0.33) {
             g2d.setColor(Color.RED);
         }
-        else if(hitpoints < totHitpoints * 0.66) {
+        else if(hitpoints < maxHitpoints * 0.66) {
             g2d.setColor(Color.YELLOW);
         }
         else {
@@ -192,19 +209,18 @@ public class SpaceShooter extends JPanel{
         g2d.fillRect(
                 (SpaceShooter.screenWidth / 50) + 5,
                 (SpaceShooter.screenHeight / 50) + 5,
-                (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / totHitpoints)) - 10),
+                (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / maxHitpoints)) - 10),
                 (SpaceShooter.screenHeight / 24) - 10
         );
         
         // If game has ended, paint the gameOver sign
-        if(gameOver) {
+        if (gameOver) {
             gameBoard.paintGameOver(g2d);
         }
     }
-
-    public static void main(String[] args) {
+    
+    private static SpaceShooter initializePanel() {
         JFrame frame = new JFrame("Space Shooter");
-        
         SpaceShooter gamePanel = new SpaceShooter();
         
         gamePanel.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -215,27 +231,41 @@ public class SpaceShooter extends JPanel{
         
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        
+        return gamePanel;
+    }
+    
+    public static void main(String[] args) {
+        SpaceShooter gamePanel = null;
+        
         long lastTime = System.nanoTime();
         long NsPerFrame = 33333333;         // 30 fps is our target.
         
         while (true) {
-            long nextFrameTime = lastTime + NsPerFrame;
+            resetGame(0);
+            
+            if (gamePanel == null) {
+                gamePanel = initializePanel();
+            }
+            
+            while (true) {
+                long nextFrameTime = lastTime + NsPerFrame;
 
-            while (System.nanoTime() < nextFrameTime) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ignored) {
-                    // ignored.
+                while (System.nanoTime() < nextFrameTime) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException ignored) {
+                        // ignored.
+                    }
                 }
-            }
-            if(!gameOver) {
-                updateGame();
-            }
-            gamePanel.repaint();
+                if (!gameOver) {
+                    updateGame();
+                }
+                gamePanel.repaint();
 
-            lastTime = nextFrameTime;
-            ++currentTick;
+                lastTime = nextFrameTime;
+                ++currentTick;
+            }
         }
     }
 
