@@ -8,26 +8,32 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 public class SpaceShooter extends JPanel{
-    static final int
-            screenWidth = 1440,
-            screenHeight = 800,
-            maxHitpoints = 10;
+    static final int screenWidth = 1440, screenHeight = 800, maxHitpoints = 10;
+    
+    private static final int EASY = 1, MEDIUM = 2, HARD = 3, EXIT_GAME = 4;
     
     private static final GameBoard gameBoard = new GameBoard();
     
-    private static boolean gameOver, incSpeed, decSpeed, incAngle, decAngle;
-    
     private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
+    
+    static final AtomicBoolean gameResetRequested = new AtomicBoolean(false);
+    
+    private static boolean gameOver, incSpeed, decSpeed, incAngle, decAngle;
     
     static PlayerShip playerShip;
     static ArrayList<EnemyShip> enemies, tmpEnemies;
@@ -36,12 +42,13 @@ public class SpaceShooter extends JPanel{
     private static Explosions explosions;
     
     static long currentTick;
-    private static int hitpoints;
+    private static int hitpoints, points;
     private static long nextEnemySpawnTick, nextAsteroidSpawnTick;
     private static long ticksPerAsteroidSpawn, ticksPerEnemySpawn;
     
     private SpaceShooter() {
         addKeyListener(new MyKeyListener());
+        addMouseListener(new Buttons());
         setFocusable(true);
     }
     
@@ -66,6 +73,7 @@ public class SpaceShooter extends JPanel{
         
         currentTick = 0;
         hitpoints = maxHitpoints;
+        points = 0;
         nextEnemySpawnTick = 0;
         nextAsteroidSpawnTick = 0;
         ticksPerEnemySpawn = 120;
@@ -112,22 +120,24 @@ public class SpaceShooter extends JPanel{
             
             // If an enemy is colliding with an asteroid, remove it from
             // the array list by not adding it to the temporary enemies,
-            // and create an explosion at the position it was in. Otherwise,
-            // check if it collides with the player. If so, reduce hitpoints.
+            // and create an explosion at the position it was in. Also
+            // award a point to the player. Otherwise, check if it collides 
+            // with the player. If so, reduce hitpoints.
             // If it is not colliding with either of these things, then
             // update the enemy and add it to the temporary enemy list so
             // it can live to fight another day.
             if (checkEnemyAsteroidCollision(e)) {
                 createExplosion(e.getX(), e.getY());
+                points++;
+                
             } else if (e.checkCollision(playerShip)) {
                 createExplosion(
                     (playerShip.getX() + e.getX()) * 0.5,
                     (playerShip.getY() + e.getY()) * 0.5
                 );
                 hitpoints--;
-                if(hitpoints == 0) {
+                if(hitpoints <= 0) {
                     gameOver = true;
-                    return;
                 }
             } else {
                 e.update();
@@ -191,11 +201,11 @@ public class SpaceShooter extends JPanel{
         // Paint the hitpoints
         g2d.setColor(Color.DARK_GRAY);
         g2d.fill3DRect(
-                SpaceShooter.screenWidth / 50,
-                SpaceShooter.screenHeight / 50,
-                SpaceShooter.screenWidth / 6,
-                SpaceShooter.screenHeight / 24,
-                true
+            SpaceShooter.screenWidth / 50,
+            SpaceShooter.screenHeight / 50,
+            SpaceShooter.screenWidth / 6,
+            SpaceShooter.screenHeight / 24,
+            true
         );
         if(hitpoints < maxHitpoints * 0.33) {
             g2d.setColor(Color.RED);
@@ -207,10 +217,11 @@ public class SpaceShooter extends JPanel{
             g2d.setColor(Color.GREEN);
         }
         g2d.fillRect(
-                (SpaceShooter.screenWidth / 50) + 5,
-                (SpaceShooter.screenHeight / 50) + 5,
-                (int)(((SpaceShooter.screenWidth / 6) * ((double)hitpoints / maxHitpoints)) - 10),
-                (SpaceShooter.screenHeight / 24) - 10
+            (SpaceShooter.screenWidth / 50) + 5,
+            (SpaceShooter.screenHeight / 50) + 5,
+            (int)(((SpaceShooter.screenWidth / 6) *
+                ((double)hitpoints / maxHitpoints)) - 10),
+            (SpaceShooter.screenHeight / 24) - 10
         );
         
         // If game has ended, paint the gameOver sign
@@ -238,17 +249,19 @@ public class SpaceShooter extends JPanel{
     public static void main(String[] args) {
         SpaceShooter gamePanel = null;
         
-        long lastTime = System.nanoTime();
-        long NsPerFrame = 33333333;         // 30 fps is our target.
-        
         while (true) {
-            resetGame(0);
+            // int difficulty = mainMenuGetDifficulty();
+            resetGame(EASY);
             
             if (gamePanel == null) {
                 gamePanel = initializePanel();
             }
             
-            while (true) {
+            long lastTime = System.nanoTime();
+            long NsPerFrame = 33333333;         // 30 fps is our target.
+            
+            gameResetRequested.set(false);
+            while (!gameResetRequested.get()) {
                 long nextFrameTime = lastTime + NsPerFrame;
 
                 while (System.nanoTime() < nextFrameTime) {
@@ -279,13 +292,20 @@ public class SpaceShooter extends JPanel{
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 // If left or right are pressed, make their booleans true
-                case KeyEvent.VK_LEFT: decAngle = true;
+                case KeyEvent.VK_LEFT:
+                    decAngle = true;
                     break;
-                case KeyEvent.VK_RIGHT: incAngle = true;
+                case KeyEvent.VK_RIGHT:
+                    incAngle = true;
                     break;
-                case KeyEvent.VK_UP: incSpeed = true;
+                case KeyEvent.VK_UP:
+                    incSpeed = true;
                     break;
-                case KeyEvent.VK_DOWN: decSpeed = true;
+                case KeyEvent.VK_DOWN:
+                    decSpeed = true;
+                    break;
+                case KeyEvent.VK_ESCAPE:
+                    gameResetRequested.set(true);
                     break;
             }
         }
@@ -294,15 +314,103 @@ public class SpaceShooter extends JPanel{
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
                 // If left or right are released, make their booleans false
-                case KeyEvent.VK_LEFT: decAngle = false;
+                case KeyEvent.VK_LEFT:
+                    decAngle = false;
                     break;
-                case KeyEvent.VK_RIGHT: incAngle = false;
+                case KeyEvent.VK_RIGHT:
+                    incAngle = false;
                     break;
-                case KeyEvent.VK_UP: incSpeed = false;
+                case KeyEvent.VK_UP:
+                    incSpeed = false;
                     break;
-                case KeyEvent.VK_DOWN: decSpeed = false;
+                case KeyEvent.VK_DOWN:
+                    decSpeed = false;
                     break;
             }
+        }
+    }
+    
+    private static class Button {
+        final BufferedImage image;
+        final int x, y, xSize, ySize, id;
+        
+        Button(int id, BufferedImage image, int x, int y) {
+            this.id = id;
+            this.image = image;
+            this.x = x;
+            this.y = y;
+            this.xSize = image.getWidth();
+            this.ySize = image.getHeight();
+        }
+        
+        boolean clicked(int x, int y) {
+            int dx = x - this.x;
+            int dy = y - this.y;
+            
+            return 0 <= dx & dx <= xSize & 0 <= y & dy <= ySize;
+        }
+    }
+    
+    private static class Buttons implements MouseListener {
+        ArrayList<Button> buttonList = new ArrayList<Button>();
+        static final int NONE = 0;
+        AtomicInteger pushedButton = new AtomicInteger(NONE);
+        
+        void addButton(Button button) {
+            int size = buttonList.size();
+            for (int i = 0; i < size; ++i) {
+                if (buttonList.get(i).id == button.id) {
+                    throw new RuntimeException("Duplicate id " + button.id);
+                }
+                if (button.id == 0) {
+                    throw new RuntimeException("Button cannot have 0 id.");
+                }
+            }
+            buttonList.add(button);
+        }
+        
+        int getPushedButton() {
+            return pushedButton.getAndSet(NONE);
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() != MouseEvent.BUTTON1) {
+                return;
+            }
+            
+            int x = e.getX();
+            int y = e.getY();
+            
+            System.out.println(x + ", " + y);
+            
+            for (int i = buttonList.size() - 1; i != -1; --i) {
+                Button b = buttonList.get(i);
+                if (b.clicked(x, y)) {
+                    pushedButton.set(b.id);
+                    break;
+                }
+            }
+        }
+        
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        
+        }
+        
+        @Override
+        public void mouseExited(MouseEvent e) {
+        
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        
+        }
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        
         }
     }
 }
