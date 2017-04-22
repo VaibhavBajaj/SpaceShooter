@@ -25,7 +25,12 @@ import javax.swing.WindowConstants;
 public class SpaceShooter extends JPanel{
     static final int screenWidth = 1440, screenHeight = 800, maxHitpoints = 10;
     
-    private static final int EASY = 1, MEDIUM = 2, HARD = 3, EXIT_GAME = 4;
+    private static final int
+        EASY = 1,
+        MEDIUM = 2,
+        HARD = 3,
+        VERY_HARD = 4,
+        EXIT_GAME = 5;
     
     private static final GameBoard gameBoard = new GameBoard();
     
@@ -49,8 +54,11 @@ public class SpaceShooter extends JPanel{
     static {
         testExitButtons = new Buttons();
         BufferedImage buttonImage = ImageLoader.load("exit.png");
-        testExitButtons.add(new Button(1, buttonImage, 100, 200));
-        testExitButtons.add(new Button(2, buttonImage, 900, 130));
+        testExitButtons.add(new Button(
+                1,
+                buttonImage,
+                SpaceShooter.screenWidth - buttonImage.getWidth(),
+                0));
     }
     
     private SpaceShooter() {
@@ -82,6 +90,26 @@ public class SpaceShooter extends JPanel{
         points = 0;
         nextEnemySpawnTick = 0;
         nextAsteroidSpawnTick = 0;
+
+        switch (difficulty) {
+            case EASY:
+                ticksPerAsteroidSpawn = 80;
+                ticksPerEnemySpawn = 180;
+                break;
+            case MEDIUM:
+                ticksPerAsteroidSpawn = 60;
+                ticksPerEnemySpawn = 120;
+                break;
+            case HARD:
+                ticksPerAsteroidSpawn = 50;
+                ticksPerEnemySpawn = 90;
+                break;
+            case VERY_HARD:
+                ticksPerAsteroidSpawn = 30;
+                ticksPerEnemySpawn = 40;
+                break;
+        }
+
         ticksPerEnemySpawn = 120;
         ticksPerAsteroidSpawn = 60;
     }
@@ -258,7 +286,7 @@ public class SpaceShooter extends JPanel{
         
         while (true) {
             // int difficulty = mainMenuGetDifficulty();
-            resetGame(EASY);
+            resetGame(VERY_HARD);
             
             if (gamePanel == null) {
                 gamePanel = initializePanel();
