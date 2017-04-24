@@ -57,7 +57,7 @@ class Menu {
             int dx = x - this.x;
             int dy = y - this.y;
             
-            return 0 <= dx & dx <= xSize & 0 <= y & dy <= ySize;
+            return (0 <= dx) & (dx <= xSize) & (0 <= dy) & (dy <= ySize);
         }
     }
     

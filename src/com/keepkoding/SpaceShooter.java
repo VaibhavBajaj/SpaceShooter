@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import java.util.ArrayList;
@@ -25,9 +26,14 @@ public class SpaceShooter extends JPanel{
         HARD = 3,
         VERY_HARD = 4,
         EXIT_GAME = 5,
-        PAUSE = 6;
+        PAUSE = 6,
+        ADD_POINTS_CHEAT = 7,
+        INSTRUCTIONS = 8;
+    
     
     private static final GameBoard gameBoard = new GameBoard();
+    
+    private static boolean inGame = false;
     
     private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
     
@@ -44,10 +50,50 @@ public class SpaceShooter extends JPanel{
     private static long nextEnemySpawnTick, nextAsteroidSpawnTick;
     private static long ticksPerAsteroidSpawn, ticksPerEnemySpawn;
     
+    private static final BufferedImage pointsLabel;
+    private static final BufferedImage[] digits;
     private static final Menu mainMenu, inGameMenu;
     
+    private static final boolean addPointsCheat = true;
+    
     static {
+        pointsLabel = ImageLoader.load("text/points.png");
+        digits = new BufferedImage[10];
+        for (int i = 0; i < 10; ++i) {
+            digits[i] = ImageLoader.load("text/" + i + ".png");
+        }
+        
         mainMenu = new Menu();
+        
+        mainMenu.add(new Menu.Button(
+            EASY,
+            ImageLoader.load("text/easy.png"),
+            100, 40,
+            KeyEvent.VK_1
+        ));
+        mainMenu.add(new Menu.Button(
+            MEDIUM,
+            ImageLoader.load("text/medium.png"),
+            100, 80,
+            KeyEvent.VK_2
+        ));
+        mainMenu.add(new Menu.Button(
+            HARD,
+            ImageLoader.load("text/hard.png"),
+            100, 120,
+            KeyEvent.VK_3
+        ));
+        mainMenu.add(new Menu.Button(
+            VERY_HARD,
+            ImageLoader.load("text/veryHard.png"),
+            100, 160,
+            KeyEvent.VK_4
+        ));
+        mainMenu.add(new Menu.Button(
+            INSTRUCTIONS,
+            ImageLoader.load("text/instructions.png"),
+            500, 40
+        ));
         
         inGameMenu = new Menu();
         
@@ -62,6 +108,16 @@ public class SpaceShooter extends JPanel{
             540, 17,
             KeyEvent.VK_P
         ));
+        
+        // I need this because I suck at the game :D
+        if (addPointsCheat) {
+            inGameMenu.add(new Menu.Button(
+                ADD_POINTS_CHEAT,
+                ImageLoader.load("text/cheat.png"),
+                780, 17,
+                KeyEvent.VK_C
+            ));
+        }
     }
     
     private SpaceShooter() {
@@ -93,7 +149,8 @@ public class SpaceShooter extends JPanel{
         points = 0;
         nextEnemySpawnTick = 0;
         nextAsteroidSpawnTick = 0;
-
+        
+        System.err.println("Difficulty level: " + difficulty);
         switch (difficulty) {
             case EASY:
                 ticksPerAsteroidSpawn = 80;
@@ -111,10 +168,9 @@ public class SpaceShooter extends JPanel{
                 ticksPerAsteroidSpawn = 30;
                 ticksPerEnemySpawn = 40;
                 break;
+            default:
+                throw new RuntimeException("Unknown difficulty " + difficulty);
         }
-
-        ticksPerEnemySpawn = 120;
-        ticksPerAsteroidSpawn = 60;
     }
     
     private static void updateGame() {
@@ -145,6 +201,8 @@ public class SpaceShooter extends JPanel{
                     a.update();
                     tmpAsteroids.add(a);
                 }
+            } else {
+                System.err.println("\33[33mRemoving off-screen asteroid\33[0m");
             }
         }
         ArrayList<Asteroid> swapTmpAsteroids = asteroids;
@@ -187,12 +245,14 @@ public class SpaceShooter extends JPanel{
         
         // Add another asteroid if now is the time to do it.
         if (nextAsteroidSpawnTick == currentTick) {
+            System.err.println("\33[34mSpawning asteroid at tick\33[0m " + currentTick);
             asteroids.add(new Asteroid());
             nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
         }
         
         // Add another enemy if now is the time to do it.
         if (nextEnemySpawnTick == currentTick) {
+            System.err.println("\33[32mSpawning enemy at tick\33[0m " + currentTick);
             enemies.add(new EnemyShip());
             nextEnemySpawnTick += ticksPerEnemySpawn;
         }
@@ -218,9 +278,16 @@ public class SpaceShooter extends JPanel{
     public void paint(Graphics g) {
         // Clears screen
         super.paint(g);
+        
         Graphics2D g2d = (Graphics2D) g;
         // Paint the background
         gameBoard.paintField(g2d);
+        
+        if (!inGame) {
+            mainMenu.paint(g2d);
+            return;
+        }
+        
         if (!gameOver) {
             // Paint the player
             playerShip.paint(g2d);
@@ -263,10 +330,32 @@ public class SpaceShooter extends JPanel{
         
         inGameMenu.paint(g2d);
         
+        paintPoints(g2d);
+        
         // If game has ended, paint the gameOver sign.
         if (gameOver) {
             gameBoard.paintGameOver(g2d);
         }
+    }
+    
+    private static AffineTransform paintPointsTransform = new AffineTransform();
+    
+    private static void paintPoints(Graphics2D g2d) {
+        if (points < 0) {
+            throw new RuntimeException("negative points");
+        }
+        int x = points;
+        paintPointsTransform.setToTranslation(screenWidth - 20, 0);
+        
+        do {
+            BufferedImage digitImage = digits[x % 10];
+            x /= 10;
+            paintPointsTransform.translate(-digitImage.getWidth(), 0);
+            g2d.drawRenderedImage(digitImage, paintPointsTransform);
+        } while (x != 0);
+        
+        paintPointsTransform.translate(-pointsLabel.getWidth(), 0);
+        g2d.drawRenderedImage(pointsLabel, paintPointsTransform);
     }
     
     private static SpaceShooter initializePanel() {
@@ -291,10 +380,23 @@ public class SpaceShooter extends JPanel{
         while (true) {
             if (gamePanel == null) {
                 gamePanel = initializePanel();
+                mainMenu.listenToPanel(gamePanel);
             }
             
-            // int difficulty = mainMenuGetDifficulty();
-            resetGame(EASY); // lol no Vaibhav I ain't playing on VERY_HARD :P
+            int difficulty;
+            do {
+                difficulty = mainMenu.getPushedButton();
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ignored) {
+                
+                }
+            } while (
+                difficulty != EASY && difficulty != MEDIUM
+                && difficulty != HARD && difficulty != VERY_HARD
+            );
+            
+            resetGame(difficulty);
             
             boolean paused = false;
             long lastTime = System.nanoTime();
@@ -303,13 +405,18 @@ public class SpaceShooter extends JPanel{
             mainMenu.listenToPanel(null);
             inGameMenu.listenToPanel(gamePanel);
             
-            inGameLoop:
-            while (true) {
+            inGame = true;
+            while (inGame) {
                 switch (inGameMenu.getPushedButton()) {
                     case EXIT_GAME:
-                        break inGameLoop;
+                        inGame = false;
+                        break;
                     case PAUSE:
                         paused = !paused;
+                        break;
+                    case ADD_POINTS_CHEAT:
+                        ++points;
+                        break;
                 }
                 
                 long nextFrameTime = lastTime + NsPerFrame;
@@ -318,7 +425,7 @@ public class SpaceShooter extends JPanel{
                     try {
                         Thread.sleep(1);
                     } catch (InterruptedException ignored) {
-                        // ignored.
+                        
                     }
                 }
                 if (!gameOver && !paused) {
