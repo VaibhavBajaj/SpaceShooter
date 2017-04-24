@@ -58,7 +58,7 @@ public class SpaceShooter extends JPanel{
     
     private static final boolean addPointsCheat = false, debugPrint = false;
     private static final int musicClipCount = 4;
-    private static int currentClipNum = 0, ptPerSec;
+    private static int currentClipNum = 0, pointsPerSecond, pointsPerKill;
     
     static {
         musicClips = new AudioClip[musicClipCount];
@@ -180,22 +180,26 @@ public class SpaceShooter extends JPanel{
             case EASY:
                 ticksPerAsteroidSpawn = 80;
                 ticksPerEnemySpawn = 180;
-                ptPerSec = 3;
+                pointsPerSecond = 3;
+                pointsPerKill = 300;
                 break;
             case MEDIUM:
                 ticksPerAsteroidSpawn = 60;
                 ticksPerEnemySpawn = 120;
-                ptPerSec = 4;
+                pointsPerSecond = 4;
+                pointsPerKill = 400;
                 break;
             case HARD:
                 ticksPerAsteroidSpawn = 50;
                 ticksPerEnemySpawn = 90;
-                ptPerSec = 5;
+                pointsPerSecond = 5;
+                pointsPerKill = 500;
                 break;
             case VERY_HARD:
                 ticksPerAsteroidSpawn = 30;
                 ticksPerEnemySpawn = 40;
-                ptPerSec = 6;
+                pointsPerSecond = 6;
+                pointsPerKill = 600;
                 break;
             default:
                 throw new RuntimeException("Unknown difficulty " + difficulty);
@@ -255,7 +259,7 @@ public class SpaceShooter extends JPanel{
             // it can live to fight another day.
             if (checkEnemyAsteroidCollision(e)) {
                 createExplosion(e.getX(), e.getY());
-                points += 100;
+                points += pointsPerKill;
             } else if (e.checkCollision(playerShip)) {
                 createExplosion(
                     (playerShip.getX() + e.getX()) * 0.5,
@@ -273,13 +277,13 @@ public class SpaceShooter extends JPanel{
         ArrayList<EnemyShip> swapTmpEnemies = enemies;
         enemies = tmpEnemies;
         tmpEnemies = swapTmpEnemies;
-
-        if (currentTick % 15 == 0) {
-            points += ptPerSec;
-        }
-
+        
         if (currentTick % 450 == 0) {
-            ptPerSec++;
+            pointsPerSecond++;
+        }
+        
+        if (currentTick % 30 == 0) {
+            points += pointsPerSecond;
         }
 
         // Add another asteroid if now is the time to do it.
