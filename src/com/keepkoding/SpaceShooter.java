@@ -58,7 +58,7 @@ public class SpaceShooter extends JPanel{
     
     private static final boolean addPointsCheat = false, debugPrint = false;
     private static final int musicClipCount = 4, pointsPerKill = 100;
-    private static int currentClipNum = 0, pointsPerSecond;
+    private static int currentClipNum = 0, pointsPerSecond, pointsPerSecondCap;
     
     static {
         musicClips = new AudioClip[musicClipCount];
@@ -181,21 +181,25 @@ public class SpaceShooter extends JPanel{
                 ticksPerAsteroidSpawn = 80;
                 ticksPerEnemySpawn = 180;
                 pointsPerSecond = 3;
+                pointsPerSecondCap = 10;
                 break;
             case MEDIUM:
                 ticksPerAsteroidSpawn = 60;
                 ticksPerEnemySpawn = 120;
                 pointsPerSecond = 4;
+                pointsPerSecondCap = 11;
                 break;
             case HARD:
                 ticksPerAsteroidSpawn = 50;
                 ticksPerEnemySpawn = 90;
                 pointsPerSecond = 5;
+                pointsPerSecondCap = 12;
                 break;
             case VERY_HARD:
                 ticksPerAsteroidSpawn = 30;
                 ticksPerEnemySpawn = 40;
                 pointsPerSecond = 6;
+                pointsPerSecondCap = 13;
                 break;
             default:
                 throw new RuntimeException("Unknown difficulty " + difficulty);
@@ -274,11 +278,11 @@ public class SpaceShooter extends JPanel{
         enemies = tmpEnemies;
         tmpEnemies = swapTmpEnemies;
         
-        if (currentTick % 450 == 0) {
+        if (currentTick % 900 == 0 && currentTick != 0 && (pointsPerSecond + 1 <= pointsPerSecondCap)) {
             pointsPerSecond++;
         }
         
-        if (currentTick % 30 == 0) {
+        if (currentTick % 30 == 0 && currentTick != 0) {
             points += pointsPerSecond;
         }
 
