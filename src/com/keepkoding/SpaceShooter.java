@@ -57,8 +57,8 @@ public class SpaceShooter extends JPanel{
     private static final Menu mainMenu, inGameMenu;
     
     private static final boolean addPointsCheat = false, debugPrint = false;
-    private static final int musicClipCount = 4;
-    private static int currentClipNum = 0, pointsPerSecond, pointsPerKill;
+    private static final int musicClipCount = 4, pointsPerKill = 100;
+    private static int currentClipNum = 0, pointsPerSecond;
     
     static {
         musicClips = new AudioClip[musicClipCount];
@@ -181,25 +181,21 @@ public class SpaceShooter extends JPanel{
                 ticksPerAsteroidSpawn = 80;
                 ticksPerEnemySpawn = 180;
                 pointsPerSecond = 3;
-                pointsPerKill = 300;
                 break;
             case MEDIUM:
                 ticksPerAsteroidSpawn = 60;
                 ticksPerEnemySpawn = 120;
                 pointsPerSecond = 4;
-                pointsPerKill = 400;
                 break;
             case HARD:
                 ticksPerAsteroidSpawn = 50;
                 ticksPerEnemySpawn = 90;
                 pointsPerSecond = 5;
-                pointsPerKill = 500;
                 break;
             case VERY_HARD:
                 ticksPerAsteroidSpawn = 30;
                 ticksPerEnemySpawn = 40;
                 pointsPerSecond = 6;
-                pointsPerKill = 600;
                 break;
             default:
                 throw new RuntimeException("Unknown difficulty " + difficulty);
