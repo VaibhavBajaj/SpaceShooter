@@ -2,9 +2,9 @@
 instruction_text = u"""\
         Controls:
         
-turning:      \u2190 \u2192
-speeding up   \u2191
-slowing down  \u2193
+turning:      left / right arrows
+speeding up   up arrow
+slowing down  down arrow
 pause         P key
 
         Goal:
