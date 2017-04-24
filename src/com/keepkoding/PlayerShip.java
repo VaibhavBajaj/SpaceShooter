@@ -16,7 +16,7 @@ class PlayerShip extends GameObj {
         super(
             playerDescription,
             SpaceShooter.screenWidth * 0.5,
-            SpaceShooter.screenHeight * 0.8,
+            SpaceShooter.screenHeight * 0.6,
             0,
             -0.0000000001
         );

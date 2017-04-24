@@ -54,7 +54,7 @@ public class SpaceShooter extends JPanel{
     private static final BufferedImage[] digits;
     private static final Menu mainMenu, inGameMenu;
     
-    private static final boolean addPointsCheat = true;
+    private static final boolean addPointsCheat = false, debugPrint = false;
     
     static {
         pointsLabel = ImageLoader.load("text/points.png");
@@ -150,7 +150,10 @@ public class SpaceShooter extends JPanel{
         nextEnemySpawnTick = 0;
         nextAsteroidSpawnTick = 0;
         
-        System.err.println("Difficulty level: " + difficulty);
+        if (debugPrint) {
+            System.err.println("Difficulty level: " + difficulty);
+        }
+        
         switch (difficulty) {
             case EASY:
                 ticksPerAsteroidSpawn = 80;
@@ -202,7 +205,10 @@ public class SpaceShooter extends JPanel{
                     tmpAsteroids.add(a);
                 }
             } else {
-                System.err.println("\33[33mRemoving off-screen asteroid\33[0m");
+                if (debugPrint) {
+                    System.err.println(
+                        "\33[33mRemoving off-screen asteroid\33[0m");
+                }
             }
         }
         ArrayList<Asteroid> swapTmpAsteroids = asteroids;
@@ -245,14 +251,20 @@ public class SpaceShooter extends JPanel{
         
         // Add another asteroid if now is the time to do it.
         if (nextAsteroidSpawnTick == currentTick) {
-            System.err.println("\33[34mSpawning asteroid at tick\33[0m " + currentTick);
+            if (debugPrint) {
+                System.err.println("\33[34mSpawning asteroid at tick\33[0m "
+                    + currentTick);
+            }
             asteroids.add(new Asteroid());
             nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
         }
         
         // Add another enemy if now is the time to do it.
         if (nextEnemySpawnTick == currentTick) {
-            System.err.println("\33[32mSpawning enemy at tick\33[0m " + currentTick);
+            if (debugPrint) {
+                System.err.println("\33[32mSpawning enemy at tick\33[0m "
+                    + currentTick);
+            }
             enemies.add(new EnemyShip());
             nextEnemySpawnTick += ticksPerEnemySpawn;
         }
@@ -379,7 +391,20 @@ public class SpaceShooter extends JPanel{
         
         while (true) {
             if (gamePanel == null) {
+                // HACK XXX
+                inGame = true;
+                resetGame(EASY);
+                createExplosion(0, 0);
                 gamePanel = initializePanel();
+                for (int i = 0; i < 20; ++i) {
+                    gamePanel.repaint();
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException ignored) {
+                    
+                    }
+                }
+                inGame = false;
                 mainMenu.listenToPanel(gamePanel);
             }
             
@@ -387,7 +412,8 @@ public class SpaceShooter extends JPanel{
             do {
                 difficulty = mainMenu.getPushedButton();
                 try {
-                    Thread.sleep(1);
+                    gamePanel.repaint();
+                    Thread.sleep(50);
                 } catch (InterruptedException ignored) {
                 
                 }
