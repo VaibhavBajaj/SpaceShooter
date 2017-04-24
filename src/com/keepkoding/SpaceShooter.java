@@ -408,6 +408,7 @@ public class SpaceShooter extends JPanel{
     
     public static void main(String[] args) {
         SpaceShooter gamePanel = null;
+        musicClips[currentClipNum].loop();
         
         while (true) {
             if (gamePanel == null) {
@@ -429,7 +430,6 @@ public class SpaceShooter extends JPanel{
             }
             
             int difficulty;
-            musicClips[currentClipNum].loop();
             
             mainMenuLoop:
             while (true) {
