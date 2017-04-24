@@ -43,6 +43,8 @@ button_text("  easy      (1)  ", "easy.png")
 button_text("  medium    (2)  ", "medium.png")
 button_text("  hard      (3)  ", "hard.png")
 button_text("  very hard (4)  ", "veryHard.png")
+button_text("  previous song  ", "previousSong.png")
+button_text("  next song      ", "nextSong.png")
 
 instruction_lines = AcmeWordSmasher.justify(instruction_text, 60).split('\n')
 

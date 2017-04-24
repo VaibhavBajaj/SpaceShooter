@@ -57,13 +57,13 @@ public class SpaceShooter extends JPanel{
     private static final Menu mainMenu, inGameMenu;
     
     private static final boolean addPointsCheat = false, debugPrint = false;
-    private static final int audioClipCount = 3;
+    private static final int musicClipCount = 3;
     private static int currentClipNum = 0;
     
     static {
         musicClips = new AudioClip[3];
-        for (int i = 0; i < audioClipCount; ++i) {
-            musicClips[i] = MusicLoader.loadClip("hindiBgMusic.wav"); // XXX
+        for (int i = 0; i < musicClipCount; ++i) {
+            musicClips[i] = MusicLoader.loadClip("hindiBgSound.wav"); // XXX
         }
         
         pointsLabel = ImageLoader.load("text/points.png");
@@ -427,6 +427,7 @@ public class SpaceShooter extends JPanel{
             }
             
             int difficulty;
+            musicClips[currentClipNum].loop();
             
             mainMenuLoop:
             while (true) {
@@ -440,18 +441,18 @@ public class SpaceShooter extends JPanel{
                 
                 switch (buttonPushed) {
                     case NEXT_SONG:
-                        audioClips[currentClipNum].stop();
-                        currentClipNum = (currentClipNum+1) % audioClipCount;
-                        audioClips[currentClipNum].loop();
+                        musicClips[currentClipNum].stop();
+                        currentClipNum = (currentClipNum+1) % musicClipCount;
+                        musicClips[currentClipNum].loop();
                         break;
                     case PREVIOUS_SONG:
-                        audioClips[currentClipNum].stop();
-                        if (currentClipNum = 0) {
-                            currentClipNum = audioClipCount - 1;
+                        musicClips[currentClipNum].stop();
+                        if (currentClipNum == 0) {
+                            currentClipNum = musicClipCount - 1;
                         } else {
                             currentClipNum--;
                         }
-                        audioClips[currentClipNum].loop();
+                        musicClips[currentClipNum].loop();
                         break;
                     case EASY: case MEDIUM: case HARD: case VERY_HARD:
                         resetGame(buttonPushed);

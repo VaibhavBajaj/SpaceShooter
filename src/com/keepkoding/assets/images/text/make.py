@@ -2,7 +2,7 @@
 instruction_text = u"""\
         Controls:
         
-turning:      left / right arrows
+turning       left / right arrows
 speeding up   up arrow
 slowing down  down arrow
 pause         P key
