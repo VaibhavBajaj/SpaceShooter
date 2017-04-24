@@ -57,14 +57,16 @@ public class SpaceShooter extends JPanel{
     private static final Menu mainMenu, inGameMenu;
     
     private static final boolean addPointsCheat = false, debugPrint = false;
-    private static final int musicClipCount = 3;
+    private static final int musicClipCount = 4;
     private static int currentClipNum = 0;
     
     static {
-        musicClips = new AudioClip[3];
-        for (int i = 0; i < musicClipCount; ++i) {
-            musicClips[i] = MusicLoader.loadClip("hindiBgSound.wav"); // XXX
-        }
+        musicClips = new AudioClip[musicClipCount];
+        
+        musicClips[0] = MusicLoader.loadClip("Descent.wav");
+        musicClips[1] = MusicLoader.loadClip("Reality.wav");
+        musicClips[2] = MusicLoader.loadClip("Slapstick.wav");
+        musicClips[3] = MusicLoader.loadClip("Vortex.wav");
         
         pointsLabel = ImageLoader.load("text/points.png");
         digits = new BufferedImage[10];
