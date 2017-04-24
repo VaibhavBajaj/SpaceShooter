@@ -49,14 +49,13 @@ public class SpaceShooter extends JPanel{
     
     static long currentTick;
     private static int hitpoints, points;
-    private static long nextEnemySpawnTick, nextAsteroidSpawnTick;
     private static long ticksPerAsteroidSpawn, ticksPerEnemySpawn;
     
     private static final BufferedImage pointsLabel;
     private static final BufferedImage[] digits;
     private static final Menu mainMenu, inGameMenu;
     
-    private static final boolean addPointsCheat = false, debugPrint = false;
+    private static boolean verbose = false;
     private static final int musicClipCount = 4, pointsPerKill = 100;
     private static int currentClipNum = 0, pointsPerSecond, pointsPerSecondCap;
     
@@ -130,16 +129,6 @@ public class SpaceShooter extends JPanel{
             540, 17,
             KeyEvent.VK_P
         ));
-        
-        // I need this because I suck at the game :D
-        if (addPointsCheat) {
-            inGameMenu.add(new Menu.Button(
-                ADD_POINTS_CHEAT,
-                ImageLoader.load("text/cheat.png"),
-                780, 17,
-                KeyEvent.VK_C
-            ));
-        }
     }
     
     private SpaceShooter() {
@@ -169,10 +158,8 @@ public class SpaceShooter extends JPanel{
         currentTick = 0;
         hitpoints = maxHitpoints;
         points = 0;
-        nextEnemySpawnTick = 0;
-        nextAsteroidSpawnTick = 0;
         
-        if (debugPrint) {
+        if (verbose) {
             System.err.println("Difficulty level: " + difficulty);
         }
         
@@ -207,9 +194,6 @@ public class SpaceShooter extends JPanel{
     }
     
     private static void updateGame() {
-
-        ++currentTick;
-
         playerShip.update(incSpeed, decSpeed, incAngle, decAngle);
 
         int asteroidCount = asteroids.size();
@@ -238,7 +222,7 @@ public class SpaceShooter extends JPanel{
                     tmpAsteroids.add(a);
                 }
             } else {
-                if (debugPrint) {
+                if (verbose) {
                     System.err.println(
                         "\33[33mRemoving off-screen asteroid\33[0m");
                 }
@@ -290,24 +274,24 @@ public class SpaceShooter extends JPanel{
         }
 
         // Add another asteroid if now is the time to do it.
-        if (nextAsteroidSpawnTick == currentTick) {
-            if (debugPrint) {
+        if (currentTick % ticksPerAsteroidSpawn == 0) {
+            if (verbose) {
                 System.err.println("\33[34mSpawning asteroid at tick\33[0m "
                     + currentTick);
             }
             asteroids.add(new Asteroid());
-            nextAsteroidSpawnTick += ticksPerAsteroidSpawn;
         }
         
         // Add another enemy if now is the time to do it.
-        if (nextEnemySpawnTick == currentTick) {
-            if (debugPrint) {
+        if (currentTick % ticksPerEnemySpawn == 0) {
+            if (verbose) {
                 System.err.println("\33[32mSpawning enemy at tick\33[0m "
                     + currentTick);
             }
             enemies.add(new EnemyShip());
-            nextEnemySpawnTick += ticksPerEnemySpawn;
         }
+        
+        ++currentTick;
     }
     
     private static boolean checkEnemyAsteroidCollision(EnemyShip enemyArg) {
@@ -425,6 +409,27 @@ public class SpaceShooter extends JPanel{
     }
     
     public static void main(String[] args) {
+        boolean cheatsAdded = false;
+        for (String arg : args) {
+            if (arg.equals("--cheat")) {
+                if (!cheatsAdded) {
+                    inGameMenu.add(new Menu.Button(
+                        ADD_POINTS_CHEAT,
+                        ImageLoader.load("text/cheat.png"),
+                        780, 17,
+                        KeyEvent.VK_C
+                    ));
+                }
+                cheatsAdded = true;
+            } else if (arg.equals("--verbose") || arg.equals("-v")) {
+                verbose = true;
+            } else {
+                System.err.printf("Unknown argument '%s'%n", arg);
+                System.err.println("Expects --cheat or --verbose.");
+                System.exit(1);
+            }
+            
+        }
         SpaceShooter gamePanel = null;
         musicClips[currentClipNum].loop();
         
@@ -498,6 +503,7 @@ public class SpaceShooter extends JPanel{
                         break;
                     case ADD_POINTS_CHEAT:
                         points += 7;
+                        hitpoints = maxHitpoints;
                         break;
                 }
                 

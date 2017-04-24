@@ -9,7 +9,7 @@ pause         P key
 
         Goal:
 
-You were piloting your spaceship through the asteroid belt when you are attacked by drones. Unfortunately, you have no missiles or other means of defending yourself. Fortunately, the drones are very stupid because their programmers ran out of time, so they na\xefvely travel in a straight line towards you to attack. Use the environment to your advantage to defeat the drones. Pilot your spaceship to lure the drones towards asteroids to destroy them. You get a point for each drone destroyed this way. Avoid crashing into drones and asteroids, as this reduces your health and earns you no points. Try to survive as long as possible.
+You were piloting your spaceship through the asteroid belt when you were ambushed by drones. Unfortunately, you have no missiles or other means of defending yourself. Fortunately, the drones are very stupid because their alien programmers ran out of time, so they na\xefvely travel in a straight line towards you to attack. Use the environment to your advantage to defeat the drones. Pilot your spaceship to lure the drones towards asteroids to destroy them. You get many points for each drone destroyed this way. Avoid crashing into drones and asteroids, as this reduces your health and earns you no points. Try to survive for as long as possible.
 """
 
 import AcmeWordSmasher
