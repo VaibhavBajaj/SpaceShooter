@@ -290,8 +290,6 @@ public class SpaceShooter extends JPanel{
             }
             enemies.add(new EnemyShip());
         }
-        
-        ++currentTick;
     }
     
     private static boolean checkEnemyAsteroidCollision(EnemyShip enemyArg) {
@@ -516,8 +514,11 @@ public class SpaceShooter extends JPanel{
                         
                     }
                 }
-                if (!gameOver && !paused) {
-                    updateGame();
+                if (!paused) {
+                    if (!gameOver) {
+                        updateGame();
+                    }
+                    ++currentTick;
                 }
                 gamePanel.repaint();
 
