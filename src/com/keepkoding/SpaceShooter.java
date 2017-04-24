@@ -28,14 +28,16 @@ public class SpaceShooter extends JPanel{
         EXIT_GAME = 5,
         PAUSE = 6,
         ADD_POINTS_CHEAT = 7,
-        INSTRUCTIONS = 8;
+        INSTRUCTIONS = 8,
+        NEXT_SONG = 9,
+        PREVIOUS_SONG = 10;
     
     
     private static final GameBoard gameBoard = new GameBoard();
     
     private static boolean inGame = false;
     
-    private static AudioClip bgSound = MusicLoader.loadClip("hindiBgSound.wav");
+    private static AudioClip musicClips[];
     
     private static boolean gameOver, incSpeed, decSpeed, incAngle, decAngle;
     
@@ -55,8 +57,15 @@ public class SpaceShooter extends JPanel{
     private static final Menu mainMenu, inGameMenu;
     
     private static final boolean addPointsCheat = false, debugPrint = false;
+    private static final int audioClipCount = 3;
+    private static int currentClipNum = 0;
     
     static {
+        musicClips = new AudioClip[3];
+        for (int i = 0; i < audioClipCount; ++i) {
+            musicClips[i] = MusicLoader.loadClip("hindiBgMusic.wav"); // XXX
+        }
+        
         pointsLabel = ImageLoader.load("text/points.png");
         digits = new BufferedImage[10];
         for (int i = 0; i < 10; ++i) {
@@ -94,6 +103,17 @@ public class SpaceShooter extends JPanel{
             ImageLoader.load("text/instructions.png"),
             500, 40
         ));
+        mainMenu.add(new Menu.Button(
+            PREVIOUS_SONG,
+            ImageLoader.load("text/previousSong.png"),
+            100, 240
+        ));
+        mainMenu.add(new Menu.Button(
+            NEXT_SONG,
+            ImageLoader.load("text/nextSong.png"),
+            100, 280
+        ));
+        
         
         inGameMenu = new Menu();
         
@@ -378,8 +398,6 @@ public class SpaceShooter extends JPanel{
         frame.add(gamePanel);
         frame.pack();
         
-        bgSound.loop();
-        
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
@@ -391,7 +409,7 @@ public class SpaceShooter extends JPanel{
         
         while (true) {
             if (gamePanel == null) {
-                // HACK XXX
+                // HACK XXX render game for a bit at startup to reduce lag.
                 inGame = true;
                 resetGame(EASY);
                 createExplosion(0, 0);
@@ -409,20 +427,37 @@ public class SpaceShooter extends JPanel{
             }
             
             int difficulty;
-            do {
-                difficulty = mainMenu.getPushedButton();
+            
+            mainMenuLoop:
+            while (true) {
                 try {
                     gamePanel.repaint();
                     Thread.sleep(50);
                 } catch (InterruptedException ignored) {
                 
                 }
-            } while (
-                difficulty != EASY && difficulty != MEDIUM
-                && difficulty != HARD && difficulty != VERY_HARD
-            );
-            
-            resetGame(difficulty);
+                int buttonPushed = mainMenu.getPushedButton();
+                
+                switch (buttonPushed) {
+                    case NEXT_SONG:
+                        audioClips[currentClipNum].stop();
+                        currentClipNum = (currentClipNum+1) % audioClipCount;
+                        audioClips[currentClipNum].loop();
+                        break;
+                    case PREVIOUS_SONG:
+                        audioClips[currentClipNum].stop();
+                        if (currentClipNum = 0) {
+                            currentClipNum = audioClipCount - 1;
+                        } else {
+                            currentClipNum--;
+                        }
+                        audioClips[currentClipNum].loop();
+                        break;
+                    case EASY: case MEDIUM: case HARD: case VERY_HARD:
+                        resetGame(buttonPushed);
+                        break mainMenuLoop;
+                }
+            }
             
             boolean paused = false;
             long lastTime = System.nanoTime();
