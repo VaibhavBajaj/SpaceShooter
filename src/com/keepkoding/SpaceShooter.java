@@ -207,6 +207,9 @@ public class SpaceShooter extends JPanel{
     }
     
     private static void updateGame() {
+
+        ++currentTick;
+
         playerShip.update(incSpeed, decSpeed, incAngle, decAngle);
 
         int asteroidCount = asteroids.size();
@@ -277,7 +280,7 @@ public class SpaceShooter extends JPanel{
         ArrayList<EnemyShip> swapTmpEnemies = enemies;
         enemies = tmpEnemies;
         tmpEnemies = swapTmpEnemies;
-        
+
         if (currentTick % 900 == 0 && currentTick != 0 && (pointsPerSecond + 1 <= pointsPerSecondCap)) {
             pointsPerSecond++;
         }
@@ -513,7 +516,6 @@ public class SpaceShooter extends JPanel{
                 gamePanel.repaint();
 
                 lastTime = nextFrameTime;
-                ++currentTick;
             }
             inGameMenu.listenToPanel(null);
             mainMenu.listenToPanel(gamePanel);
