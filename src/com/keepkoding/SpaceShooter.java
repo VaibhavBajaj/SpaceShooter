@@ -63,7 +63,7 @@ public class SpaceShooter extends JPanel{
     static {
         musicClips = new AudioClip[3];
         for (int i = 0; i < audioClipCount; ++i) {
-            musicClips[i] = MusicLoader.loadClip("hindiBgMusic.wav"); // XXX
+            musicClips[i] = MusicLoader.loadClip("Vortex.wav"); // XXX
         }
         
         pointsLabel = ImageLoader.load("text/points.png");
