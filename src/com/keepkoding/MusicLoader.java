@@ -8,7 +8,7 @@ class MusicLoader {
 
     static AudioClip loadClip(String name) {
         AudioClip clip;
-        URL url = MusicLoader.class.getResource("assets/music/" + name);
+        URL url = MusicLoader.class.getResource("/music/" + name);
         try {
              clip = Applet.newAudioClip(url);
 
